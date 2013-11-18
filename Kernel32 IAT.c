@@ -1,7 +1,6 @@
 
-
     /*//
-    //@Name     :   PE ANALYSE
+    //@Name     :   Extract kernel32 IAT
     //@Author   :   Toufik Airane
     //*/
 
