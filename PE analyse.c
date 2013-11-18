@@ -1,5 +1,4 @@
 
-
     /*//
     //@Name     :   PE ANALYSE
     //@Author   :   Toufik Airane
@@ -11,7 +10,7 @@
 
     int main(int argc, char * argv[])
     {
-    HANDLE hFile = CreateFile("putty.exe", GENERIC_READ, FILE_SHARE_READ, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
+    HANDLE hFile = CreateFile(".exe", GENERIC_READ, FILE_SHARE_READ, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
     HANDLE hFileMap = CreateFileMapping(hFile, 0, PAGE_READONLY, 0, 0, 0);
     HANDLE hFileMapView = MapViewOfFile(hFileMap, FILE_MAP_READ, 0, 0, 0);
 
