@@ -1,4 +1,5 @@
 
+
     /*//
     //@Name     :   PE ANALYSE
     //@Author   :   Toufik Airane
@@ -10,7 +11,7 @@
 
     int main(int argc, char * argv[])
     {
-    HANDLE hFile = CreateFile(".exe", GENERIC_READ, FILE_SHARE_READ, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
+    HANDLE hFile = CreateFile("main.exe", GENERIC_READ, FILE_SHARE_READ, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
     HANDLE hFileMap = CreateFileMapping(hFile, 0, PAGE_READONLY, 0, 0, 0);
     HANDLE hFileMapView = MapViewOfFile(hFileMap, FILE_MAP_READ, 0, 0, 0);
 
@@ -37,13 +38,11 @@
 
     }
 
+    DWORD ImportDirectory;
+    DWORD ImageSizeDirectory;
 
-	DWORD hFileMapViewEx = GetModuleHandle("kernel32");
-	DWORD ImportDirectory;
-	DWORD ImageSizeDirectory;
-
-	PIMAGE_THUNK_DATA OrigThunk;
-	PIMAGE_THUNK_DATA FirstThunk;
+    PIMAGE_THUNK_DATA OrigThunk;
+    PIMAGE_THUNK_DATA FirstThunk;
 
     ImportDirectory = (DWORD)(EnTeteNT->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_IMPORT].VirtualAddress);
     ImageSizeDirectory = (DWORD)(EnTeteNT->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_IMPORT].Size);
@@ -53,7 +52,7 @@
 
         while(IATBase->Name)
         {
-            printf("DLL/LIB : %s\n", IATBase->Name);
+            printf("DLL/LIB : %08x\n", IATBase->Name);
             printf("OriginalThunk : %08x\n", IATBase->OriginalFirstThunk);
             printf("FirstThunk : %08x\n", IATBase->FirstThunk);
 
