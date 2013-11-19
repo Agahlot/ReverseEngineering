@@ -1,4 +1,3 @@
-
     /*//
     //@Name     :   Extract kernel32 IAT
     //@Author   :   Toufik Airane
@@ -29,7 +28,7 @@
 
         while(IATBase->Name)
         {
-            printf("DLL/LIB : %s\n", hFileMapView + IATBase->Name);
+            printf("DLL/LIB : %08x\n", IATBase->Name);
             printf("OriginalThunk : %08x\n", IATBase->OriginalFirstThunk);
             printf("FirstThunk : %08x\n", IATBase->FirstThunk);
 
@@ -38,13 +37,12 @@
             while(OrigThunk->u1.AddressOfData != 0)
             {
                     PIMAGE_IMPORT_BY_NAME APIName = (PIMAGE_IMPORT_BY_NAME)(hFileMapView + OrigThunk->u1.AddressOfData);
-
-                       printf("[~] API Name%s\n", APIName->Name);
-
+                    if(APIName->Name < 0x80000000)
+                        printf("[~] API Name%s\n", APIName->Name);
                     OrigThunk++;
             }
-            printf("%10s\n","-");
             IATBase++;
-			}
+        }
+        
 	return 0;
 	}
