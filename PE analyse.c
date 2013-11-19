@@ -1,7 +1,9 @@
-    /*//
-    //@Name     :   PE ANALYSE
-    //@Author   :   Toufik Airane
-    //*/
+   
+    
+    /**
+    * @file PE analyse.c
+    * @author Airane Toufik
+    **/
 
     #include<stdio.h>
     #include<stdlib.h>
