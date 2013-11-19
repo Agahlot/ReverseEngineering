@@ -62,7 +62,7 @@
             {
                     PIMAGE_IMPORT_BY_NAME APIName = (PIMAGE_IMPORT_BY_NAME)(hFileMapView + OrigThunk->u1.AddressOfData);
                     if(APIName->Name < 0x80000000)
-                        printf("[~] API Name%s\n", APIName->Name);
+                        printf("[~] API Name %s\n", APIName->Name);
                     OrigThunk++;
             }
             IATBase++;
