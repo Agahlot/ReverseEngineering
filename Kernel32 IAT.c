@@ -1,8 +1,10 @@
-    /*//
-    //@Name     :   Extract kernel32 IAT
-    //@Author   :   Toufik Airane
-    //*/
-
+    
+    
+    /**
+    * @file Kernel32 IAT.c
+    * @author Airane Toufik
+    */
+    
     #include<stdio.h>
     #include<stdlib.h>
     #include<windows.h>
