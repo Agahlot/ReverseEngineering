@@ -1,5 +1,4 @@
 
-
     /*//
     //@Name     :   PE ANALYSE
     //@Author   :   Toufik Airane
@@ -58,17 +57,15 @@
 
             PIMAGE_THUNK_DATA OrigThunk = (PIMAGE_THUNK_DATA)(hFileMapView + IATBase->OriginalFirstThunk);
             PIMAGE_THUNK_DATA FirstThunk = (PIMAGE_THUNK_DATA)(hFileMapView + IATBase->FirstThunk);
-            do
+            while(OrigThunk->u1.AddressOfData != 0)
             {
-                PIMAGE_IMPORT_BY_NAME APIName = (PIMAGE_IMPORT_BY_NAME)(hFileMapView + OrigThunk->u1.AddressOfData);
-                    if (!((DWORD)APIName & IMAGE_ORDINAL_FLAG)) // IMAGE ORDINAL FLAG IL EST FUMER CE TRUC !!! FAUT VOIR
-                       printf("%s\n", APIName->Name);
-
-                OrigThunk++;
-
-            } while(OrigThunk->u1.AddressOfData != 0);
-            printf("----------------------\n");
+                    PIMAGE_IMPORT_BY_NAME APIName = (PIMAGE_IMPORT_BY_NAME)(hFileMapView + OrigThunk->u1.AddressOfData);
+                    if(APIName->Name < 0x80000000)
+                        printf("[~] API Name%s\n", APIName->Name);
+                    OrigThunk++;
+            }
             IATBase++;
         }
+        
     return 0;
     }
