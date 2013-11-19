@@ -23,7 +23,7 @@
     ImportDirectory = (DWORD)(EnTeteNT->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_IMPORT].VirtualAddress);
     ImageSizeDirectory = (DWORD)(EnTeteNT->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_IMPORT].Size);
     printf("[~] VIEW Import Address Tables KERNEL32 [~]\n");
-    printf("[#]Import table address %08x and size %08x\n", ImportDirectory, ImageSizeDirectory);
+    printf("[#] Import table address %08x and size %08x [#]\n", ImportDirectory, ImageSizeDirectory);
     IATBase = (PIMAGE_IMPORT_DESCRIPTOR)(hFileMapView + (DWORD)ImportDirectory);
 
         while(IATBase->Name)
