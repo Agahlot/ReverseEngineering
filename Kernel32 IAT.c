@@ -39,7 +39,7 @@
             while(OrigThunk->u1.AddressOfData != 0)
             {
                     PIMAGE_IMPORT_BY_NAME APIName = (PIMAGE_IMPORT_BY_NAME)(hFileMapView + OrigThunk->u1.AddressOfData);
-                        printf("[~] API Name%10s\n", APIName->Name);
+                        printf("[~] API Name %32s\n", APIName->Name);
                     OrigThunk++;
             }
             IATBase++;
