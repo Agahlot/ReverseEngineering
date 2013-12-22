@@ -3,14 +3,14 @@
 //	GitHub              :	toufikairane@github.io
 //	Mail to 	        :	tf.airane@gmail.com
 //* * * * * * * * * * * |
-//	Source file         :	DumpIAT.c
-//	Brief		        :	Dump IAT from an "Handle"
+//	Source file         :	ps.c
+//	Brief		        :	Simple report process status in cmdline interface
 //	Language	        :	C
 //  Compilation option  :   no
 //* * * * * * * * * * * |
 //	Licence		        :	Cette oeuvre est totalement libre de droit.
-//	*******		        |	Je vous encourage à la partager et/ou la modifier.
-//	*******		        |	En revanche son utilisation engage votre entière responsabilité.
+//	*******		        |	Je vous encourage ï¿½ la partager et/ou la modifier.
+//	*******		        |	En revanche son utilisation engage votre entiï¿½re responsabilitï¿½.
 //**//**//**//**|---------------------------------------------------------------------------
 
     #include <stdio.h>
