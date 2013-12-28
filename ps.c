@@ -1,16 +1,16 @@
 ﻿/*\
-\ / Author ~ From   Toufik Airane ~ Paris
-/ \ GitHub          toufikairane@github.io
-\ / Mail to         tf.airane@gmail.com
-/ \ Twitter         @toufikairane
+\ / Author ~ From   | Toufik Airane ~ Paris
+/ \ GitHub          | toufikairane@github.io
+\ / Mail to         | tf.airane@gmail.com
+/ \ Twitter         | @toufikairane
 \ /
-/ \ Source file     ps.c
-\ / Language        C
-/ \ Brief           Simple report process status in cmdline interface
+/ \ Source file     | ps.c
+\ / Language        | C
+/ \ Brief           | Simple report process status in cmdline interface
 \ /
-/ \ Licence         Cette oeuvre est totalement libre de droit.
-\ /                 Je vous encourage à la partager et/ou la modifier.
-/ \                 Son utilisation engage votre entière responsabilité.
+/ \ Licence         | Cette oeuvre est totalement libre de droit.
+\ /                 | Je vous encourage à la partager et/ou la modifier.
+/ \                 | Son utilisation engage votre entière responsabilité.
 \*/
 
     #include <stdio.h>
