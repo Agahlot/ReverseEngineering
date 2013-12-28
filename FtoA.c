@@ -1,17 +1,17 @@
-//**//**//**//**|---------------------------------------------------------------------------
-//	Author  // From     :	Toufik Airane // Paris
-//	GitHub              :	toufikairane@github.io
-//	Mail to 	        :	tf.airane@gmail.com
-//* * * * * * * * * * * |
-//	Source file         :	FtoA.c
-//	Brief		        :	Convert Function Name to Offset Address from DLL
-//	Language	        :	C
-//  Compilation option  :   no
-//* * * * * * * * * * * |
-//	Licence		        :	Cette oeuvre est totalement libre de droit.
-//	*******		        |	Je vous encourage à la partager et/ou la modifier.
-//	*******		        |	En revanche son utilisation engage votre entière responsabilité.
-//**//**//**//**|---------------------------------------------------------------------------
+/*\
+\ / Author ~ From   Toufik Airane ~ Paris
+/ \ GitHub          toufikairane@github.io
+\ / Mail to         tf.airane@gmail.com
+/ \ Twitter         @toufikairane
+\ /
+/ \ Source file     FtoA.c
+\ / Language        C
+/ \ Brief           Convert Function Name to Offset Address from DLL
+\ /
+/ \ Licence         Cette oeuvre est totalement libre de droit.
+\ /                 Je vous encourage à la partager et/ou la modifier.
+/ \                 Son utilisation engage votre entière responsabilité.
+\*/
 
     #include<stdio.h>
     #include<stdlib.h>
@@ -38,7 +38,7 @@
                 return 1;
         }
 
-        printf("[#]\t%s\t0x%08x",argv[2], hFunc);
+        printf("[~] %s 0x%08x",argv[2], hFunc);
         FreeLibrary(hDll);
         return 0;
     }
