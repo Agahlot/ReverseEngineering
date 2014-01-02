@@ -4,8 +4,8 @@
 \ / Mail to         | tf.airane@gmail.com
 / \ Twitter         | @toufikairane
 \ /
-/ \ Source file     | evil.cpp ~ compile to evil.dll
-\ / Language        | C++
+/ \ Source file     | evil.c ~ compile to evil.dll
+\ / Language        | C
 / \ Brief           | poc evil dll can be injected in process
 \ /
 / \ Licence :   	| Cette oeuvre est totalement libre de droit.
