@@ -14,12 +14,13 @@
 \*/
 
     #include <iostream>
+    #include <cstdlib>
     #include <windows.h>
     using namespace std;
 
     int main(int argc, char *argv[])
     {
-        if(argc!=2)
+        if(argc!=3)
             exit(EXIT_FAILURE);
 
         HANDLE hFile = CreateFile( argv[1],
@@ -41,7 +42,7 @@
         ReadFile(hFile, &hNT, sizeof(IMAGE_NT_HEADERS), &dwTaille, NULL);   // NT HEADER
 
         cout << hex << "Ex AddressOfEntryPoint Offset : " << hNT.OptionalHeader.AddressOfEntryPoint << endl;
-        hNT.OptionalHeader.AddressOfEntryPoint = 0x00001337;                // HARDCODE OFFSET ENTRY POINT
+        hNT.OptionalHeader.AddressOfEntryPoint = (DWORD) strtoul(argv[2], NULL, 16);
         SetFilePointer(hFile, hDOS.e_lfanew, 0, FILE_BEGIN);
         WriteFile(hFile, &hNT, sizeof(hNT), &dwTaille, NULL);               // Patch NT HEADER
         cout << hex << "New  AddressOfEntryPoint Offset : " << hNT.OptionalHeader.AddressOfEntryPoint << endl;
