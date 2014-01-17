@@ -1,15 +1,15 @@
 ﻿/*\
 \ / Author ~ From   | Toufik Airane ~ Paris
-/ \ GitHub          | toufikairane@github.io
-\ / Mail to         | tf.airane@gmail.com
-/ \ Twitter         | @toufikairane
+/ \ GitHub          | tfairane@github.com
+\ / Mail            | tf.airane@gmail.com
+/ \ Twitter         | @tfairane
 \ /
-/ \ Source file     | ps.c
+/ \ File            | ps.c
 \ / Language        | C
-/ \ Brief           | Simple report process status in cmdline interface
+/ \ Brief           | Report Process Status CLI
 \ /
-/ \ Licence         | Cette oeuvre est totalement libre de droit.
-\ /                 | Je vous encourage à la partager et/ou la modifier.
+/ \ Licence         | Ce code est totalement libre de droit.
+\ /                 | Je vous encourage à le partager et/ou le modifier.
 / \                 | Son utilisation engage votre entière responsabilité.
 \*/
 
@@ -18,7 +18,7 @@
     #include <windows.h>
     #include <TlHelp32.h>
     #define C_EOL "\n"
-	
+
     int main(int argc, char *argv[])
     {
         PROCESSENTRY32 ProcessEntry={0};

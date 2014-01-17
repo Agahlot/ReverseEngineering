@@ -1,22 +1,22 @@
 /*\
 \ / Author ~ From   | Toufik Airane ~ Paris
-/ \ GitHub          | toufikairane@github.io
-\ / Mail to         | tf.airane@gmail.com
-/ \ Twitter         | @toufikairane
+/ \ GitHub          | tfairane@github.com
+\ / Mail            | tf.airane@gmail.com
+/ \ Twitter         | @tfairane
 \ /
-/ \ Source file     | DumpIAT.c
+/ \ File            | DumpIAT.c
 \ / Language        | C
 / \ Brief           | DUMP Import Address Table
 \ /
-/ \ Licence         | Cette oeuvre est totalement libre de droit.
-\ /                 | Je vous encourage à la partager et/ou la modifier.
+/ \ Licence         | Ce code est totalement libre de droit.
+\ /                 | Je vous encourage à le partager et/ou le modifier.
 / \                 | Son utilisation engage votre entière responsabilité.
 \*/
 
 	#include<stdio.h>
 	#include<stdlib.h>
 	#include<windows.h>
-    	#define C_EOL "\n"
+    #define C_EOL "\n"
 
 	int main(int argc, char * argv[])
 	{

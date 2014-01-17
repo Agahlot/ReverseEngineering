@@ -27,7 +27,7 @@
     {
         cout << "InjectDLL into Process RING 3 | follow @tfairane" << endl;
         if(argc!=3) {
-            cout << argv[0] << " <Process Name>" << " <FULL Path DLL>" << endl;
+            cout << "[NOTICE] " << argv[0] << " <Process Name> <FULL Path DLL>" << endl;
             exit(EXIT_FAILURE);
         }
 

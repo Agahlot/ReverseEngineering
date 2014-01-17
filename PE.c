@@ -1,21 +1,23 @@
 /*\
 \ / Author ~ From   | Toufik Airane ~ Paris
-/ \ GitHub          | toufikairane@github.io
-\ / Mail to         | tf.airane@gmail.com
-/ \ Twitter         | @toufikairane
+/ \ GitHub          | tfairane@github.com
+\ / Mail            | tf.airane@gmail.com
+/ \ Twitter         | @tfairane
 \ /
-/ \ Source file     | PE.c
+/ \ File            | PE.c
 \ / Language        | C
-/ \ Brief           | PE Analyse
+/ \ Brief           | PE Reader
 \ /
-/ \ Licence         | Cette oeuvre est totalement libre de droit.
-\ /                 | Je vous encourage à la partager et/ou la modifier.
+/ \ Licence         | Ce code est totalement libre de droit.
+\ /                 | Je vous encourage à le partager et/ou le modifier.
 / \                 | Son utilisation engage votre entière responsabilité.
 \*/
+
     #include <stdio.h>
     #include <stdlib.h>
     #include <windows.h>
     #define C_EOL "\n"
+
     /*/
     typedef struct _IMAGE_DOS_HEADER {
 	WORD e_magic;
@@ -116,8 +118,10 @@
 
     int main(int argc, char *argv[])
     {
-        if(argc!=2)
+        if(argc!=2) {
+            printf("[NOTICE] %s <PE File>", argv[1]);
             exit(EXIT_FAILURE);
+        }
 
         HANDLE hFile = CreateFile( argv[1],
                                    GENERIC_WRITE|GENERIC_READ,
@@ -210,6 +214,8 @@
         for(i=0; i< hNT.FileHeader.NumberOfSections; i++) {
         ReadFile(hFile, &hSection, sizeof(IMAGE_SECTION_HEADER), &dwTaille, NULL);
         printf("%32s : %s"C_EOL, "Name",                        hSection.Name);
+        printf("%32s : 0x%08x"C_EOL, "Misc { PhysicalAddress",  hSection.Misc.PhysicalAddress);
+        printf("%32s : 0x%08x"C_EOL, "VirtualSize }",           hSection.Misc.VirtualSize);
         printf("%32s : 0x%08x"C_EOL, "VirtualAddress",          hSection.VirtualAddress);
         printf("%32s : 0x%08x"C_EOL, "SizeOfRawData",           hSection.SizeOfRawData);
         printf("%32s : 0x%08x"C_EOL, "PointerToRawData",        hSection.PointerToRawData);
@@ -219,6 +225,7 @@
         printf("%32s : 0x%08x"C_EOL, "NumberOfLinenumbers",     hSection.NumberOfLinenumbers);
         printf("%32s : 0x%08x"C_EOL C_EOL, "Characteristics",   hSection.Characteristics);
         }
+
         CloseHandle(hFile);
         return 0;
     }

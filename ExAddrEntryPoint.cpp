@@ -1,16 +1,16 @@
 /*\
 \ / Author ~ From   | Toufik Airane ~ Paris
-/ \ GitHub          | toufikairane@github.io
-\ / Mail to         | tf.airane@gmail.com
-/ \ Twitter         | @toufikairane
+/ \ GitHub          | tfairane@github.com
+\ / Mail            | tf.airane@gmail.com
+/ \ Twitter         | @tfairane
 \ /
-/ \ Source file     | ExAddrEntryPoint.cpp
+/ \ File            | ExAddrEntryPoint.cpp
 \ / Language        | C++ ~ Windows API
 / \ Brief           | Rewrite AddressOfEntryPoint
 \ /
-/ \ Licence :   	| Cette oeuvre est totalement libre de droit.
-\ /      			| Je vous encourage à la partager et/ou la modifier.
-/ \    				| Son utilisation engage votre entière responsabilité.
+/ \ Licence         | Ce code est totalement libre de droit.
+\ /                 | Je vous encourage à le partager et/ou le modifier.
+/ \                 | Son utilisation engage votre entière responsabilité.
 \*/
 
     #include <iostream>
