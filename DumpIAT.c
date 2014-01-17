@@ -20,51 +20,49 @@
 
 	int main(int argc, char * argv[])
 	{
+    PIMAGE_DOS_HEADER EnTeteDOS;
+    PIMAGE_NT_HEADERS EnTeteNT;
 
-	PIMAGE_DOS_HEADER EnTeteDOS;
-	PIMAGE_NT_HEADERS EnTeteNT;
+    DWORD ImportDirectory;
+    DWORD ImageSizeDirectory;
 
-	DWORD ImportDirectory;
-	DWORD ImageSizeDirectory;
+    PIMAGE_IMPORT_DESCRIPTOR IATBase;
+    PIMAGE_THUNK_DATA OrigThunk;
+    PIMAGE_THUNK_DATA FirstThunk;
 
-	PIMAGE_IMPORT_DESCRIPTOR IATBase;
-	PIMAGE_THUNK_DATA OrigThunk;
-	PIMAGE_THUNK_DATA FirstThunk;
-
-	HANDLE hFileMapView =   GetModuleHandle(NULL); // CURRENT HANDLE
-	EnTeteDOS           =   (PIMAGE_DOS_HEADER)hFileMapView;
-	EnTeteNT            =   (PIMAGE_NT_HEADERS)(hFileMapView + EnTeteDOS->e_lfanew);
-
-	if(EnTeteNT->Signature == IMAGE_NT_SIGNATURE) {
-
-	DWORD ImportDirectory;
-	DWORD ImageSizeDirectory;
-	PIMAGE_THUNK_DATA OrigThunk;
-	PIMAGE_THUNK_DATA FirstThunk;
+    FILE* hLog          =   fopen("DumpIAT.log.txt", "w+");
+    HANDLE hFile        =   GetModuleHandle(NULL);// Current Handle
+    EnTeteDOS           =   (PIMAGE_DOS_HEADER)hFile;
+    EnTeteNT            =   (PIMAGE_NT_HEADERS)(hFile + EnTeteDOS->e_lfanew);
 
     ImportDirectory     =   (DWORD)(EnTeteNT->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_IMPORT].VirtualAddress);
-	ImageSizeDirectory  =   (DWORD)(EnTeteNT->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_IMPORT].Size);
-	printf("<~> DUMP Import Address Table" C_EOL );
-	printf("<~> Address : 0x%08x and Size : %d" C_EOL C_EOL, ImportDirectory, ImageSizeDirectory);
-	PIMAGE_IMPORT_DESCRIPTOR IATBase = (PIMAGE_IMPORT_DESCRIPTOR)(hFileMapView + (DWORD)ImportDirectory);
+    ImageSizeDirectory  =   (DWORD)(EnTeteNT->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_IMPORT].Size);
+    IATBase = (PIMAGE_IMPORT_DESCRIPTOR)(hFile + (DWORD)ImportDirectory);
 
-			while(IATBase->Name)
-			{
-				printf("> DLL Name : %s - ", hFileMapView + IATBase->Name);
-				printf("OriginalThunk : %08x - ", IATBase->OriginalFirstThunk);
-				printf("FirstThunk : %08x" C_EOL C_EOL, IATBase->FirstThunk);
+    fprintf(hLog, "[ DUMP Import Address Table ]"C_EOL);
+    fprintf(hLog, "[Address] : 0x%08x"C_EOL"[Size] : %d"C_EOL C_EOL, ImportDirectory, ImageSizeDirectory);
 
-				PIMAGE_THUNK_DATA OrigThunk     =   (PIMAGE_THUNK_DATA)(hFileMapView + IATBase->OriginalFirstThunk);
-				PIMAGE_THUNK_DATA FirstThunk    =   (PIMAGE_THUNK_DATA)(hFileMapView + IATBase->FirstThunk);
-				while(OrigThunk->u1.AddressOfData)
-				{
-						PIMAGE_IMPORT_BY_NAME APIName = (PIMAGE_IMPORT_BY_NAME)(hFileMapView + OrigThunk->u1.AddressOfData);
-                        printf("-> API Name : %-32s Address : 0x%08x" C_EOL, APIName->Name, GetProcAddress(GetModuleHandle(hFileMapView + IATBase->Name), APIName->Name));
-						OrigThunk++;
-				}
-				printf(C_EOL);
-				IATBase++;
-			}
-	}
-	return 0;
+        while(IATBase->Name)
+        {
+            fprintf(hLog, "[DLL Name] : %s"C_EOL, hFile + IATBase->Name);
+            fprintf(hLog, "[OriginalThunk] : %08x"C_EOL, IATBase->OriginalFirstThunk);
+            fprintf(hLog, "[FirstThunk] : %08x"C_EOL C_EOL, IATBase->FirstThunk);
+
+            PIMAGE_THUNK_DATA OrigThunk     =   (PIMAGE_THUNK_DATA)(hFile + IATBase->OriginalFirstThunk);
+            PIMAGE_THUNK_DATA FirstThunk    =   (PIMAGE_THUNK_DATA)(hFile + IATBase->FirstThunk);
+
+                while(OrigThunk->u1.AddressOfData)
+                {
+                    PIMAGE_IMPORT_BY_NAME APIName = (PIMAGE_IMPORT_BY_NAME)(hFile + OrigThunk->u1.AddressOfData);
+                    fprintf(hLog, "[API Name] : %-32s [Address] : 0x%08x"C_EOL, APIName->Name, FirstThunk->u1.Function);
+
+                    OrigThunk++;
+                    FirstThunk++;
+                }
+                fprintf(hLog,C_EOL);
+                IATBase++;
+        }
+
+    fclose(hLog);
+    return 0;
 	}
