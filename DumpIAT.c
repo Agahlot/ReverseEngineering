@@ -18,8 +18,8 @@
 	#include<windows.h>
     #define C_EOL "\n"
 
-	int main(int argc, char * argv[])
-	{
+    int main(int argc, char * argv[])
+    {
     PIMAGE_DOS_HEADER EnTeteDOS;
     PIMAGE_NT_HEADERS EnTeteNT;
 
