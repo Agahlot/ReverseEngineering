@@ -14,18 +14,17 @@
 \*/
 
     #include <stdio.h>
-    #include <stdlib.h>
     #include <windows.h>
     #include <TlHelp32.h>
     #define C_EOL "\n"
 
-    int main(int argc, char *argv[])
+    int main()
     {
-        PROCESSENTRY32 ProcessEntry={0};
-        ProcessEntry.dwSize=sizeof(PROCESSENTRY32);
-        HANDLE Snapshot32Process = CreateToolhelp32Snapshot (TH32CS_SNAPPROCESS, 0);
+        PROCESSENTRY32 ProcessEntry = { 0 };
+        ProcessEntry.dwSize = sizeof(PROCESSENTRY32);
+        HANDLE Snapshot32Process = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
 
-        if(Snapshot32Process==INVALID_HANDLE_VALUE)
+        if(Snapshot32Process == INVALID_HANDLE_VALUE)
             exit(EXIT_FAILURE);
 
         if(!Process32First(Snapshot32Process, &ProcessEntry)) {
@@ -33,11 +32,11 @@
                 exit(EXIT_FAILURE);
         }
 
-        printf("%8s %6c %8s %64s"C_EOL C_EOL, "PPID", '-', "PID", "Process Name");
+        printf(" %-32s %8s %2c %8s" C_EOL C_EOL, "** Process Name **", "** PID **", '-', "** PPID **");
         while (Process32Next(Snapshot32Process, &ProcessEntry)) {
-                printf("%8s %6c %8s %64s"C_EOL, ProcessEntry.th32ParentProcessID, '-', ProcessEntry.th32ProcessID, ProcessEntry.szExeFile);
+                printf(" %-32s %8d %2c %8d" C_EOL, ProcessEntry.szExeFile, ProcessEntry.th32ProcessID , '-', ProcessEntry.th32ParentProcessID);
         }
 
         CloseHandle(Snapshot32Process);
-        return 0;
+        return EXIT_SUCCESS;
     }

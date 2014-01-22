@@ -14,26 +14,25 @@
 \*/
 
     #include<stdio.h>
-    #include<stdlib.h>
     #include<windows.h>
 
     int main(int argc, char *argv[]) {
         if(argc!=3) {
-                printf("[#] %s <DLL> <FUNCTION>", argv[0]);
+                printf("[#] %s [DLL] [FUNCTION]", argv[0]);
                 return 1;
     }
 
         HMODULE hDll;
         hDll = LoadLibrary(argv[1]);
         if(!hDll) {
-                printf("[#] LoadLibrary : Error");
+                printf("[#] LoadLibrary() : Error");
                 return 1;
         }
 
         FARPROC hFunc;
         hFunc = GetProcAddress(hDll, argv[2]);
         if(!hFunc) {
-                printf("[#] GetProcAddress : Error");
+                printf("[#] GetProcAddress() : Error");
                 FreeLibrary(hDll);
                 return 1;
         }

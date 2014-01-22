@@ -6,7 +6,7 @@
 \ /
 / \ File            | PE.c
 \ / Language        | C
-/ \ Brief           | PE Reader
+/ \ Brief           | PE HEADERS DUMP
 \ /
 / \ Licence         | Ce code est totalement libre de droit.
 \ /                 | Je vous encourage à le partager et/ou le modifier.
@@ -17,6 +17,12 @@
     #include <stdlib.h>
     #include <windows.h>
     #define C_EOL "\n"
+    #define print(x,y) printf("%32s : 0x%08x\n", x, y);
+    #define printv0(x) printf("\n\n%50s\n\n", x);
+    #define printv1(x,y) printf("\n%32s : %s\n", x, y);
+    #define printv2(x,y) printf("%-64s : 0x%08x\n", x, y);
+    #define NOTICE "PE HEADERS DUMP 1.1 ( follow @tfairane )\n"\
+                    "Usage: %s [File]"
 
     /*/
     typedef struct _IMAGE_DOS_HEADER {
@@ -99,6 +105,25 @@
     /*/
 
     /*/
+    #define IMAGE_DIRECTORY_ENTRY_EXPORT            0
+    #define IMAGE_DIRECTORY_ENTRY_IMPORT            1
+    #define IMAGE_DIRECTORY_ENTRY_RESOURCE          2
+    #define IMAGE_DIRECTORY_ENTRY_EXCEPTION         3
+    #define IMAGE_DIRECTORY_ENTRY_SECURITY          4
+    #define IMAGE_DIRECTORY_ENTRY_BASERELOC         5
+    #define IMAGE_DIRECTORY_ENTRY_DEBUG             6
+    #define IMAGE_DIRECTORY_ENTRY_COPYRIGHT         7
+    #define IMAGE_DIRECTORY_ENTRY_ARCHITECTURE      7
+    #define IMAGE_DIRECTORY_ENTRY_GLOBALPTR         8
+    #define IMAGE_DIRECTORY_ENTRY_TLS               9
+    #define IMAGE_DIRECTORY_ENTRY_LOAD_CONFIG       10
+    #define IMAGE_DIRECTORY_ENTRY_BOUND_IMPORT      11
+    #define IMAGE_DIRECTORY_ENTRY_IAT               12
+    #define IMAGE_DIRECTORY_ENTRY_DELAY_IMPORT      13
+    #define IMAGE_DIRECTORY_ENTRY_COM_DESCRIPTOR    14
+    /*/
+
+    /*/
     typedef struct _IMAGE_SECTION_HEADER {
 	BYTE Name[IMAGE_SIZEOF_SHORT_NAME];
 	union {
@@ -116,10 +141,23 @@
     } IMAGE_SECTION_HEADER,*PIMAGE_SECTION_HEADER;
     /*/
 
+    /*/
+    typedef struct _IMAGE_IMPORT_DESCRIPTOR {
+	_ANONYMOUS_UNION union {
+		DWORD Characteristics;
+		DWORD OriginalFirstThunk;
+	} DUMMYUNIONNAME;
+	DWORD TimeDateStamp;
+	DWORD ForwarderChain;
+	DWORD Name;
+	DWORD FirstThunk;
+    } IMAGE_IMPORT_DESCRIPTOR,*PIMAGE_IMPORT_DESCRIPTOR;
+    /*/
+
     int main(int argc, char *argv[])
     {
         if(argc!=2) {
-            printf("[NOTICE] %s <PE File>", argv[1]);
+            printf(NOTICE, argv[0]);
             exit(EXIT_FAILURE);
         }
 
@@ -138,92 +176,151 @@
         IMAGE_DOS_HEADER hDOS;
         IMAGE_NT_HEADERS hNT;
         IMAGE_SECTION_HEADER hSection;
+        IMAGE_IMPORT_DESCRIPTOR hEntryImport;
+        IMAGE_THUNK_DATA hOriginalFirstThunk;
+        IMAGE_THUNK_DATA hFirstThunk;
+        IMAGE_IMPORT_BY_NAME API;
 
         SetFilePointer(hFile, 0, 0, FILE_BEGIN);
         ReadFile(hFile, &hDOS, sizeof(IMAGE_DOS_HEADER), &dwTaille, NULL);// DOS HEADER
         SetFilePointer(hFile, hDOS.e_lfanew, 0, FILE_BEGIN);
         ReadFile(hFile, &hNT, sizeof(IMAGE_NT_HEADERS), &dwTaille, NULL);// NT HEADER
 
-        printf(C_EOL"%32s"C_EOL C_EOL, "[ IMAGE_DOS_HEADER ]");
-        printf("%32s : 0x%08x"C_EOL, "e_magic",     hDOS.e_magic);//#define IMAGE_DOS_SIGNATURE 0x5A4D
-        printf("%32s : 0x%08x"C_EOL, "e_cblp",      hDOS.e_cblp);
-        printf("%32s : 0x%08x"C_EOL, "e_cp",        hDOS.e_cp);
-        printf("%32s : 0x%08x"C_EOL, "e_crlc",      hDOS.e_crlc);
-        printf("%32s : 0x%08x"C_EOL, "e_cparhdr",   hDOS.e_cparhdr);
-        printf("%32s : 0x%08x"C_EOL, "e_minalloc",  hDOS.e_minalloc);
-        printf("%32s : 0x%08x"C_EOL, "e_maxalloc",  hDOS.e_maxalloc);
-        printf("%32s : 0x%08x"C_EOL, "e_ss",        hDOS.e_ss);
-        printf("%32s : 0x%08x"C_EOL, "e_sp",        hDOS.e_sp);
-        printf("%32s : 0x%08x"C_EOL, "e_csum",      hDOS.e_csum);
-        printf("%32s : 0x%08x"C_EOL, "e_ip",        hDOS.e_ip);
-        printf("%32s : 0x%08x"C_EOL, "e_cs",        hDOS.e_cs);
-        printf("%32s : 0x%08x"C_EOL, "e_lfarlc",    hDOS.e_lfarlc);
-        printf("%32s : 0x%08x"C_EOL, "e_ovno",      hDOS.e_ovno);
-        printf("%32s : 0x%08x"C_EOL, "e_res",       hDOS.e_res);
-        printf("%32s : 0x%08x"C_EOL, "e_oemid",     hDOS.e_oemid);
-        printf("%32s : 0x%08x"C_EOL, "e_oeminfo",   hDOS.e_oeminfo);
-        printf("%32s : 0x%08x"C_EOL, "e_res2",      hDOS.e_res2);
-        printf("%32s : 0x%08x"C_EOL, "e_lfanew",    hDOS.e_lfanew);
+        printv0("** IMAGE_DOS_HEADER **");
+        print("e_magic",    hDOS.e_magic);//#define IMAGE_DOS_SIGNATURE 0x5A4D
+        print("e_cblp",     hDOS.e_cblp);
+        print("e_cp",       hDOS.e_cp);
+        print("e_crlc",     hDOS.e_crlc);
+        print("e_cparhdr",  hDOS.e_cparhdr);
+        print("e_minalloc", hDOS.e_minalloc);
+        print("e_maxalloc", hDOS.e_maxalloc);
+        print("e_ss",       hDOS.e_ss);
+        print("e_sp",       hDOS.e_sp);
+        print("e_csum",     hDOS.e_csum);
+        print("e_ip",       hDOS.e_ip);
+        print("e_cs",       hDOS.e_cs);
+        print("e_lfarlc",   hDOS.e_lfarlc);
+        print("e_ovno",     hDOS.e_ovno);
+        print("e_res",      hDOS.e_res);
+        print("e_oemid",    hDOS.e_oemid);
+        print("e_oeminfo",  hDOS.e_oeminfo);
+        print("e_res2",     hDOS.e_res2);
+        print("e_lfanew",   hDOS.e_lfanew);
 
-        printf(C_EOL"%32s"C_EOL C_EOL, "[ IMAGE_NT_HEADERS ]");
-        printf("%32s : 0x%08x"C_EOL, "Signature",   hNT.Signature);//#define IMAGE_NT_SIGNATURE 0x00004550
+        printv0("** IMAGE_NT_HEADERS **");
+        print("Signature",  hNT.Signature);//#define IMAGE_NT_SIGNATURE 0x00004550
 
-        printf(C_EOL"%32s"C_EOL C_EOL, "[ IMAGE_FILE_HEADER ]");
-        printf("%32s : 0x%08x"C_EOL, "Machine",                 hNT.FileHeader.Machine);
-        printf("%32s : 0x%08x"C_EOL, "NumberOfSections",        hNT.FileHeader.NumberOfSections);
-        printf("%32s : 0x%08x"C_EOL, "TimeDateStamp",           hNT.FileHeader.TimeDateStamp);
-        printf("%32s : 0x%08x"C_EOL, "PointerToSymbolTable",    hNT.FileHeader.PointerToSymbolTable);
-        printf("%32s : 0x%08x"C_EOL, "NumberOfSymbols",         hNT.FileHeader.NumberOfSymbols);
-        printf("%32s : 0x%08x"C_EOL, "SizeOfOptionalHeader",    hNT.FileHeader.SizeOfOptionalHeader);
-        printf("%32s : 0x%08x"C_EOL, "Characteristics",         hNT.FileHeader.Characteristics);
+        printv0("** IMAGE_FILE_HEADER **");
+        print("Machine",                hNT.FileHeader.Machine);
+        print("NumberOfSections",       hNT.FileHeader.NumberOfSections);
+        print("TimeDateStamp",          hNT.FileHeader.TimeDateStamp);
+        print("PointerToSymbolTable",   hNT.FileHeader.PointerToSymbolTable);
+        print("NumberOfSymbols",        hNT.FileHeader.NumberOfSymbols);
+        print("SizeOfOptionalHeader",   hNT.FileHeader.SizeOfOptionalHeader);
+        print("Characteristics",        hNT.FileHeader.Characteristics);
 
-        printf(C_EOL"%32s"C_EOL C_EOL, "[ IMAGE_OPTIONAL_HEADER ]");
-        printf("%32s : 0x%08x"C_EOL, "Magic",                       hNT.OptionalHeader.Magic);
-        printf("%32s : 0x%08x"C_EOL, "MajorLinkerVersion",          hNT.OptionalHeader.MajorLinkerVersion);
-        printf("%32s : 0x%08x"C_EOL, "MinorLinkerVersion",          hNT.OptionalHeader.MinorLinkerVersion);
-        printf("%32s : 0x%08x"C_EOL, "SizeOfCode",                  hNT.OptionalHeader.SizeOfCode);
-        printf("%32s : 0x%08x"C_EOL, "SizeOfInitializedData",       hNT.OptionalHeader.SizeOfInitializedData);
-        printf("%32s : 0x%08x"C_EOL, "SizeOfUninitializedData",     hNT.OptionalHeader.SizeOfUninitializedData);
-        printf("%32s : 0x%08x"C_EOL, "AddressOfEntryPoint",         hNT.OptionalHeader.AddressOfEntryPoint);
-        printf("%32s : 0x%08x"C_EOL, "BaseOfCode",                  hNT.OptionalHeader.BaseOfCode);
-        printf("%32s : 0x%08x"C_EOL, "BaseOfData",                  hNT.OptionalHeader.BaseOfData);
-        printf("%32s : 0x%08x"C_EOL, "ImageBase",                   hNT.OptionalHeader.ImageBase);
-        printf("%32s : 0x%08x"C_EOL, "SectionAlignment",            hNT.OptionalHeader.SectionAlignment);
-        printf("%32s : 0x%08x"C_EOL, "FileAlignment",               hNT.OptionalHeader.FileAlignment);
-        printf("%32s : 0x%08x"C_EOL, "MajorOperatingSystemVersion", hNT.OptionalHeader.MajorOperatingSystemVersion);
-        printf("%32s : 0x%08x"C_EOL, "MinorOperatingSystemVersion", hNT.OptionalHeader.MinorOperatingSystemVersion);
-        printf("%32s : 0x%08x"C_EOL, "MajorImageVersion",           hNT.OptionalHeader.MajorImageVersion);
-        printf("%32s : 0x%08x"C_EOL, "MinorImageVersion",           hNT.OptionalHeader.MinorImageVersion);
-        printf("%32s : 0x%08x"C_EOL, "MajorSubsystemVersion",       hNT.OptionalHeader.MajorSubsystemVersion);
-        printf("%32s : 0x%08x"C_EOL, "MinorSubsystemVersion",       hNT.OptionalHeader.MinorSubsystemVersion);
-        printf("%32s : 0x%08x"C_EOL, "Win32VersionValue",           hNT.OptionalHeader.Win32VersionValue);
-        printf("%32s : 0x%08x"C_EOL, "SizeOfImage",                 hNT.OptionalHeader.SizeOfImage);
-        printf("%32s : 0x%08x"C_EOL, "SizeOfHeaders",               hNT.OptionalHeader.SizeOfHeaders);
-        printf("%32s : 0x%08x"C_EOL, "CheckSum",                    hNT.OptionalHeader.CheckSum);
-        printf("%32s : 0x%08x"C_EOL, "Subsystem",                   hNT.OptionalHeader.Subsystem);
-        printf("%32s : 0x%08x"C_EOL, "DllCharacteristics",          hNT.OptionalHeader.DllCharacteristics);
-        printf("%32s : 0x%08x"C_EOL, "SizeOfStackReserve",          hNT.OptionalHeader.SizeOfStackReserve);
-        printf("%32s : 0x%08x"C_EOL, "SizeOfStackCommit",           hNT.OptionalHeader.SizeOfStackCommit);
-        printf("%32s : 0x%08x"C_EOL, "SizeOfHeapReserve",           hNT.OptionalHeader.SizeOfHeapReserve);
-        printf("%32s : 0x%08x"C_EOL, "SizeOfHeapCommit",            hNT.OptionalHeader.SizeOfHeapCommit);
-        printf("%32s : 0x%08x"C_EOL, "LoaderFlags",                 hNT.OptionalHeader.LoaderFlags);
-        printf("%32s : 0x%08x"C_EOL, "NumberOfRvaAndSizes",         hNT.OptionalHeader.NumberOfRvaAndSizes);
+        printv0("** IMAGE_OPTIONAL_HEADER **");
+        print("Magic",                       hNT.OptionalHeader.Magic);
+        print("MajorLinkerVersion",          hNT.OptionalHeader.MajorLinkerVersion);
+        print("MinorLinkerVersion",          hNT.OptionalHeader.MinorLinkerVersion);
+        print("SizeOfCode",                  hNT.OptionalHeader.SizeOfCode);
+        print("SizeOfInitializedData",       hNT.OptionalHeader.SizeOfInitializedData);
+        print("SizeOfUninitializedData",     hNT.OptionalHeader.SizeOfUninitializedData);
+        print("AddressOfEntryPoint",         hNT.OptionalHeader.AddressOfEntryPoint);
+        print("BaseOfCode",                  hNT.OptionalHeader.BaseOfCode);
+        print("BaseOfData",                  hNT.OptionalHeader.BaseOfData);
+        print("ImageBase",                   hNT.OptionalHeader.ImageBase);
+        print("SectionAlignment",            hNT.OptionalHeader.SectionAlignment);
+        print("FileAlignment",               hNT.OptionalHeader.FileAlignment);
+        print("MajorOperatingSystemVersion", hNT.OptionalHeader.MajorOperatingSystemVersion);
+        print("MinorOperatingSystemVersion", hNT.OptionalHeader.MinorOperatingSystemVersion);
+        print("MajorImageVersion",           hNT.OptionalHeader.MajorImageVersion);
+        print("MinorImageVersion",           hNT.OptionalHeader.MinorImageVersion);
+        print("MajorSubsystemVersion",       hNT.OptionalHeader.MajorSubsystemVersion);
+        print("MinorSubsystemVersion",       hNT.OptionalHeader.MinorSubsystemVersion);
+        print("Win32VersionValue",           hNT.OptionalHeader.Win32VersionValue);
+        print("SizeOfImage",                 hNT.OptionalHeader.SizeOfImage);
+        print("SizeOfHeaders",               hNT.OptionalHeader.SizeOfHeaders);
+        print("CheckSum",                    hNT.OptionalHeader.CheckSum);
+        print("Subsystem",                   hNT.OptionalHeader.Subsystem);
+        print("DllCharacteristics",          hNT.OptionalHeader.DllCharacteristics);
+        print("SizeOfStackReserve",          hNT.OptionalHeader.SizeOfStackReserve);
+        print("SizeOfStackCommit",           hNT.OptionalHeader.SizeOfStackCommit);
+        print("SizeOfHeapReserve",           hNT.OptionalHeader.SizeOfHeapReserve);
+        print("SizeOfHeapCommit",            hNT.OptionalHeader.SizeOfHeapCommit);
+        print("LoaderFlags",                 hNT.OptionalHeader.LoaderFlags);
+        print("NumberOfRvaAndSizes",         hNT.OptionalHeader.NumberOfRvaAndSizes);
 
-        printf(C_EOL"%32s * %d"C_EOL C_EOL, "[ IMAGE_SECTION_HEADER ]", hNT.FileHeader.NumberOfSections );
+        printv0("** DataDirectory **");
+        printv2("[IMAGE_DIRECTORY_ENTRY_EXPORT].VirtualAddress", hNT.OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_EXPORT].VirtualAddress);
+        printv2("[IMAGE_DIRECTORY_ENTRY_EXPORT].Size", hNT.OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_EXPORT].Size);
+        printv2("[IMAGE_DIRECTORY_ENTRY_IMPORT].VirtualAddress", hNT.OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_IMPORT].VirtualAddress);
+        printv2("[IMAGE_DIRECTORY_ENTRY_IMPORT].Size", hNT.OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_IMPORT].Size);
+        printv2("[IMAGE_DIRECTORY_ENTRY_RESOURCE].VirtualAddress", hNT.OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_RESOURCE].VirtualAddress);
+        printv2("[IMAGE_DIRECTORY_ENTRY_RESOURCE].Size", hNT.OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_RESOURCE].Size);
+        printv2("[IMAGE_DIRECTORY_ENTRY_EXCEPTION].VirtualAddress", hNT.OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_EXCEPTION].VirtualAddress);
+        printv2("[IMAGE_DIRECTORY_ENTRY_EXCEPTION].Size", hNT.OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_EXCEPTION].Size);
+        printv2("[IMAGE_DIRECTORY_ENTRY_SECURITY].VirtualAddress", hNT.OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_SECURITY].VirtualAddress);
+        printv2("[IMAGE_DIRECTORY_ENTRY_SECURITY].Size", hNT.OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_SECURITY].Size);
+        printv2("[IMAGE_DIRECTORY_ENTRY_BASERELOC].VirtualAddress", hNT.OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_BASERELOC].VirtualAddress);
+        printv2("[IMAGE_DIRECTORY_ENTRY_BASERELOC].Size", hNT.OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_BASERELOC].Size);
+        printv2("[IMAGE_DIRECTORY_ENTRY_DEBUG].VirtualAddress", hNT.OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_DEBUG].VirtualAddress);
+        printv2("[IMAGE_DIRECTORY_ENTRY_DEBUG].Size", hNT.OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_DEBUG].Size);
+        printv2("[IMAGE_DIRECTORY_ENTRY_COPYRIGHT].VirtualAddress", hNT.OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_COPYRIGHT].VirtualAddress);
+        printv2("[IMAGE_DIRECTORY_ENTRY_COPYRIGHT].Size", hNT.OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_COPYRIGHT].Size);
+        printv2("[IMAGE_DIRECTORY_ENTRY_ARCHITECTURE].VirtualAddress", hNT.OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_ARCHITECTURE].VirtualAddress);
+        printv2("[IMAGE_DIRECTORY_ENTRY_ARCHITECTURE].Size", hNT.OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_ARCHITECTURE].Size);
+        printv2("[IMAGE_DIRECTORY_ENTRY_GLOBALPTR].VirtualAddress", hNT.OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_GLOBALPTR].VirtualAddress);
+        printv2("[IMAGE_DIRECTORY_ENTRY_GLOBALPTR].Size", hNT.OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_GLOBALPTR].Size);
+        printv2("[IMAGE_DIRECTORY_ENTRY_TLS].VirtualAddress", hNT.OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_TLS].VirtualAddress);
+        printv2("[IMAGE_DIRECTORY_ENTRY_TLS].Size", hNT.OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_TLS].Size);
+        printv2("[IMAGE_DIRECTORY_ENTRY_LOAD_CONFIG].VirtualAddress", hNT.OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_LOAD_CONFIG].VirtualAddress);
+        printv2("[IMAGE_DIRECTORY_ENTRY_LOAD_CONFIG].Size", hNT.OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_LOAD_CONFIG].Size);
+        printv2("[IMAGE_DIRECTORY_ENTRY_BOUND_IMPORT].VirtualAddress", hNT.OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_BOUND_IMPORT].VirtualAddress);
+        printv2("[IMAGE_DIRECTORY_ENTRY_BOUND_IMPORT].Size", hNT.OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_BOUND_IMPORT].Size);
+        printv2("[IMAGE_DIRECTORY_ENTRY_IAT].VirtualAddress", hNT.OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_IAT].VirtualAddress);
+        printv2("[IMAGE_DIRECTORY_ENTRY_IAT].Size", hNT.OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_IAT].Size);
+        printv2("[IMAGE_DIRECTORY_ENTRY_DELAY_IMPORT].VirtualAddress", hNT.OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_DELAY_IMPORT].VirtualAddress);
+        printv2("[IMAGE_DIRECTORY_ENTRY_DELAY_IMPORT].Size", hNT.OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_DELAY_IMPORT].Size);
+        printv2("[IMAGE_DIRECTORY_ENTRY_COM_DESCRIPTOR].VirtualAddress", hNT.OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_COM_DESCRIPTOR].VirtualAddress);
+        printv2("[IMAGE_DIRECTORY_ENTRY_COM_DESCRIPTOR].Size", hNT.OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_COM_DESCRIPTOR].Size);
+
+        DWORD EntryExportRAWOffset  =       0;
+        DWORD EntryExportVA         =       hNT.OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_IMPORT].VirtualAddress;
+        DWORD EntryExportSize       =       hNT.OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_IMPORT].Size;
+
+        printv0("** IMAGE_SECTION_HEADER **");
         int i;
         for(i=0; i< hNT.FileHeader.NumberOfSections; i++) {
-        ReadFile(hFile, &hSection, sizeof(IMAGE_SECTION_HEADER), &dwTaille, NULL);
-        printf("%32s : %s"C_EOL, "Name",                        hSection.Name);
-        printf("%32s : 0x%08x"C_EOL, "Misc { PhysicalAddress",  hSection.Misc.PhysicalAddress);
-        printf("%32s : 0x%08x"C_EOL, "VirtualSize }",           hSection.Misc.VirtualSize);
-        printf("%32s : 0x%08x"C_EOL, "VirtualAddress",          hSection.VirtualAddress);
-        printf("%32s : 0x%08x"C_EOL, "SizeOfRawData",           hSection.SizeOfRawData);
-        printf("%32s : 0x%08x"C_EOL, "PointerToRawData",        hSection.PointerToRawData);
-        printf("%32s : 0x%08x"C_EOL, "PointerToRelocations",    hSection.PointerToRelocations);
-        printf("%32s : 0x%08x"C_EOL, "PointerToLinenumbers",    hSection.PointerToLinenumbers);
-        printf("%32s : 0x%08x"C_EOL, "NumberOfRelocations",     hSection.NumberOfRelocations);
-        printf("%32s : 0x%08x"C_EOL, "NumberOfLinenumbers",     hSection.NumberOfLinenumbers);
-        printf("%32s : 0x%08x"C_EOL C_EOL, "Characteristics",   hSection.Characteristics);
+            ReadFile(hFile, &hSection, sizeof(IMAGE_SECTION_HEADER), &dwTaille, NULL);// SECTION HEADER
+            printv1("Name",                     hSection.Name);
+            print("Misc.PhysicalAddress",       hSection.Misc.PhysicalAddress);
+            print("Misc.VirtualSize",           hSection.Misc.VirtualSize);
+            print("VirtualAddress",             hSection.VirtualAddress);
+            print("SizeOfRawData",              hSection.SizeOfRawData);
+            print("PointerToRawData",           hSection.PointerToRawData);
+            print("PointerToRelocations",       hSection.PointerToRelocations);
+            print("PointerToLinenumbers",       hSection.PointerToLinenumbers);
+            print("NumberOfRelocations",        hSection.NumberOfRelocations);
+            print("NumberOfLinenumbers",        hSection.NumberOfLinenumbers);
+            print("Characteristics",            hSection.Characteristics);
+
+            if(hSection.VirtualAddress <= EntryExportVA)// SAVE IMAGE_DIRECTORY_ENTRY_IMPORT RAW OFFSET
+                EntryExportRAWOffset = EntryExportVA - hSection.VirtualAddress + hSection.PointerToRawData;
+        }
+
+        SetFilePointer(hFile, EntryExportRAWOffset, 0, FILE_BEGIN);// IMAGE_DIRECTORY_ENTRY_IMPORT DUMP
+        ReadFile(hFile, &hEntryImport, sizeof(IMAGE_IMPORT_DESCRIPTOR), &dwTaille, NULL);
+
+        printv0("** IMAGE_DIRECTORY_ENTRY_IMPORT **");
+        while(hEntryImport.OriginalFirstThunk) {
+        print("Name",             hEntryImport.Name);
+        print("OriginalFirstThunk", hEntryImport.OriginalFirstThunk);
+        print("FirstThunk",         hEntryImport.FirstThunk);
+        print("Characteristics",    hEntryImport.Characteristics);
+        print("TimeDateStamp",      hEntryImport.TimeDateStamp);
+        print("ForwarderChain",     hEntryImport.ForwarderChain);
+        ReadFile(hFile, &hEntryImport, sizeof(IMAGE_IMPORT_DESCRIPTOR), &dwTaille, NULL);
         }
 
         CloseHandle(hFile);
