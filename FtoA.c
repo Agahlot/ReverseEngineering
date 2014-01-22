@@ -18,15 +18,15 @@
 
     int main(int argc, char *argv[]) {
         if(argc!=3) {
-                printf("[#] %s [DLL] [FUNCTION]", argv[0]);
-                return 1;
+                printf("[#] %s [Dll] [Function]", argv[0]);
+                return 0x1;
     }
 
         HMODULE hDll;
         hDll = LoadLibrary(argv[1]);
         if(!hDll) {
                 printf("[#] LoadLibrary() : Error");
-                return 1;
+                return 0x1;
         }
 
         FARPROC hFunc;
@@ -34,10 +34,10 @@
         if(!hFunc) {
                 printf("[#] GetProcAddress() : Error");
                 FreeLibrary(hDll);
-                return 1;
+                return 0x1;
         }
 
         printf("[~] %s 0x%08x",argv[2], hFunc);
         FreeLibrary(hDll);
-        return 0;
+        return 0x0;
     }

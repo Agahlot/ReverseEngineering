@@ -4,7 +4,7 @@
 \ / Mail            | tf.airane@gmail.com
 / \ Twitter         | @tfairane
 \ /
-/ \ File            | PE.c
+/ \ File            | pedump.c
 \ / Language        | C
 / \ Brief           | PE HEADERS DUMP
 \ /
@@ -314,7 +314,7 @@
 
         printv0("** IMAGE_DIRECTORY_ENTRY_IMPORT **");
         while(hEntryImport.OriginalFirstThunk) {
-        print("Name",             hEntryImport.Name);
+        print("Name",               hEntryImport.Name);
         print("OriginalFirstThunk", hEntryImport.OriginalFirstThunk);
         print("FirstThunk",         hEntryImport.FirstThunk);
         print("Characteristics",    hEntryImport.Characteristics);
