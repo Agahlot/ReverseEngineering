@@ -27,7 +27,7 @@
     {
         cout << "InjectDLL into Process RING 3 | follow @tfairane" << endl;
         if(argc!=3) {
-            cout << "[NOTICE] " << argv[0] << " <Process Name> <FULL Path DLL>" << endl;
+            cout << "[NOTICE] " << argv[0] << " [Process Name] [FULL Path DLL]" << endl;
             exit(EXIT_FAILURE);
         }
 
@@ -40,30 +40,30 @@
         HANDLE hProcess     =   OpenProcess( PROCESS_ALL_ACCESS, FALSE, pid);
         if(hProcess == NULL) {
             cout << "[#] OpenProcess() : Error (" << GetLastError() << ")" << endl;
-            exit( EXIT_FAILURE);
+            exit(EXIT_FAILURE);
         }
 
         LPVOID AddrAlloc    =   VirtualAllocEx( hProcess, NULL, sPathDll, MEM_COMMIT, PAGE_EXECUTE_READWRITE);
         if(AddrAlloc == NULL) {
             cout << "[#] VirtualAllocEx() : Error (" << GetLastError() << ")" << endl;
-            exit( EXIT_FAILURE);
+            exit(EXIT_FAILURE);
         }
 
         if(WriteProcessMemory( hProcess, AddrAlloc, PathDll, sPathDll, 0) == 0) {
             cout << "[#] WriteProcessMemory() : Error (" << GetLastError() << ")" << endl;
-            exit( EXIT_FAILURE);
+            exit(EXIT_FAILURE);
         }
 
         LPTHREAD_START_ROUTINE addrLoadLibrary = (LPTHREAD_START_ROUTINE) GetProcAddress( GetModuleHandle("kernel32.dll"), "LoadLibraryA");
         if(addrLoadLibrary == NULL) {
             cout << "[#] GetProcAddress(\"kernel32.dll\", \"LoadLibraryA\") : Error (" << GetLastError() << ")" << endl;
-            exit( EXIT_FAILURE);
+            exit(EXIT_FAILURE);
         }
 
         HANDLE RemoteFunction   =   CreateRemoteThread( hProcess, NULL, 0, addrLoadLibrary, AddrAlloc, 0, 0);
         if(RemoteFunction == NULL) {
             cout << "[#] CreateRemoteThread() : Error (" << GetLastError() << ")" << endl;
-            exit( EXIT_FAILURE);
+            exit(EXIT_FAILURE);
         }
 
         cout << "[~] DLL Injected ! :o" << endl;
@@ -74,18 +74,18 @@
         LPTHREAD_START_ROUTINE addrFreeLibrary = (LPTHREAD_START_ROUTINE) GetProcAddress( GetModuleHandle("kernel32.dll"), "FreeLibrary");
         if(addrFreeLibrary == NULL) {
             cout << "[#] GetProcAddress(\"kernel32.dll\", \"FreeLibrary\") : Error (" << GetLastError() << ")" << endl;
-            exit( EXIT_FAILURE);
+            exit(EXIT_FAILURE);
         }
 
         RemoteFunction = CreateRemoteThread( hProcess, NULL, 0, addrFreeLibrary, GetHandleDll(PathDll, pid), 0 , 0);
         if(RemoteFunction == NULL) {
             cout << "[#] CreateRemoteThread() : Error (" << GetLastError() << ")" << endl;
-            exit( EXIT_FAILURE);
+            exit(EXIT_FAILURE);
         }
 
         cout << "[~] DLL Free ! ;)" << endl;
-        CloseHandle( RemoteFunction);
-        CloseHandle( hProcess);
+        CloseHandle(RemoteFunction);
+        CloseHandle(hProcess);
 
         return 0;
     }
