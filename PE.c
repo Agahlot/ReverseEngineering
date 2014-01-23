@@ -1,6 +1,6 @@
 /*\
 \ / Author ~ From   | Toufik Airane ~ Paris
-/ \ GitHub          | tfairane@github.com
+/ \ GitHub          | tfairane.github.com
 \ / Mail            | tf.airane@gmail.com
 / \ Twitter         | @tfairane
 \ /

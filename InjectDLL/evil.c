@@ -1,15 +1,15 @@
 /*\
 \ / Author ~ From   | Toufik Airane ~ Paris
-/ \ GitHub          | toufikairane@github.io
-\ / Mail to         | tf.airane@gmail.com
-/ \ Twitter         | @toufikairane
+/ \ GitHub          | tfairane.github.com
+\ / Mail            | tf.airane@gmail.com
+/ \ Twitter         | @tfairane
 \ /
-/ \ Source file     | evil.c ~ compile to evil.dll
+/ \ File            | evil.c ~ compile to evil.dll
 \ / Language        | C
 / \ Brief           | poc evil dll can be injected in process
 \ /
-/ \ Licence :   	| Cette oeuvre est totalement libre de droit.
-\ /      			| Je vous encourage à la partager et/ou la modifier.
+/ \ Licence         | Ce code est totalement libre de droit.
+\ /      			| Je vous encourage à le partager et/ou le modifier.
 / \    				| Son utilisation engage votre entière responsabilité.
 \*/
 
