@@ -6,11 +6,11 @@
 \ /
 / \ File            | FtoA.c
 \ / Language        | C
-/ \ Brief           | Convert Function Name to Offset Address from DLL
+/ \ Brief           | Retrieve Function Address from Name
 \ /
-/ \ Licence         | Ce code est totalement libre de droit.
+/ \ Licence         | Ce code est totalement libre.
 \ /                 | Je vous encourage à le partager et/ou le modifier.
-/ \                 | Son utilisation engage votre entière responsabilité.
+/ \                 | « Un grand pouvoir implique de grandes responsabilités. »
 \*/
 
     #include<stdio.h>

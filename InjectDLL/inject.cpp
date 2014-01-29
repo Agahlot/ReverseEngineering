@@ -8,9 +8,9 @@
 \ / Language        | C++
 / \ Brief           | InjectDLL into Process RING 3
 \ /
-/ \ Licence         | Ce code est totalement libre de droit.
-\ /      			| Je vous encourage à le partager et/ou le modifier.
-/ \    				| Son utilisation engage votre entière responsabilité.
+/ \ Licence         | Ce code est totalement libre.
+\ /                 | Je vous encourage à le partager et/ou le modifier.
+/ \                 | « Un grand pouvoir implique de grandes responsabilités. »
 \*/
 
     #include <iostream>

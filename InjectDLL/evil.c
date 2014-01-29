@@ -8,9 +8,9 @@
 \ / Language        | C
 / \ Brief           | poc evil dll can be injected in process
 \ /
-/ \ Licence         | Ce code est totalement libre de droit.
-\ /      			| Je vous encourage à le partager et/ou le modifier.
-/ \    				| Son utilisation engage votre entière responsabilité.
+/ \ Licence         | Ce code est totalement libre.
+\ /                 | Je vous encourage à le partager et/ou le modifier.
+/ \                 | « Un grand pouvoir implique de grandes responsabilités. »
 \*/
 
     #include <windows.h>

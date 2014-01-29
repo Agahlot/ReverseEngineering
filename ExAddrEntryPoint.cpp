@@ -4,13 +4,13 @@
 \ / Mail            | tf.airane@gmail.com
 / \ Twitter         | @tfairane
 \ /
-/ \ File            | ExAddrEntryPoint.cpp
-\ / Language        | C++ ~ Windows API
-/ \ Brief           | Rewrite AddressOfEntryPoint
+/ \ File            | EntryPointRedirection.cpp
+\ / Language        | C++
+/ \ Brief           | POC AddressOfEntryPoint Redirection
 \ /
-/ \ Licence         | Ce code est totalement libre de droit.
+/ \ Licence         | Ce code est totalement libre.
 \ /                 | Je vous encourage à le partager et/ou le modifier.
-/ \                 | Son utilisation engage votre entière responsabilité.
+/ \                 | « Un grand pouvoir implique de grandes responsabilités. »
 \*/
 
     #include <iostream>
