@@ -1,16 +1,16 @@
 ﻿/*\
-\ / Author ~ From | Toufik Airane ~ Paris
-/ \ GitHub        | tfairane.github.com
-\ / Mail          | tf.airane@gmail.com
-/ \ Twitter       | @tfairane
+\ / Author ~ From   | Toufik Airane ~ Paris
+/ \ GitHub          | tfairane.github.com
+\ / Mail            | tf.airane@gmail.com
+/ \ Twitter         | @tfairane
 \ /
-/ \ File          | ps.c
-\ / Language      | C
-/ \ Brief         | Report Process Status
+/ \ File            | ps.c
+\ / Language        | C
+/ \ Brief           | Report Process Status
 \ /
-/ \ Licence       | Ce code est totalement libre de droit.
-\ /               | Je vous encourage à le partager et/ou le modifier.
-/ \               | Son utilisation engage votre entière responsabilité.
+/ \ Licence         | Ce code est totalement libre.
+\ /                 | Je vous encourage à le partager et/ou le modifier.
+/ \                 | « Un grand pouvoir implique de grandes responsabilités. »
 \*/
 
     #include <stdio.h>

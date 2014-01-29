@@ -8,9 +8,9 @@
 \ / Language        | C
 / \ Brief           | Analyse PE File Header && IAT dump
 \ /
-/ \ Licence         | Ce code est totalement libre de droit.
+/ \ Licence         | Ce code est totalement libre.
 \ /                 | Je vous encourage à le partager et/ou le modifier.
-/ \                 | Son utilisation engage votre entière responsabilité.
+/ \                 | « Un grand pouvoir implique de grandes responsabilités. »
 \*/
 
     #include <stdio.h>
@@ -19,12 +19,10 @@
     #define C_EOL "\n"
     #define printx(x,y) printf("%s : 0x%08x" C_EOL , x, y);
     #define print_dd(x,y) printf("%s : %08x" C_EOL , x, y);
-
     #define print_title(x) printf( C_EOL C_EOL "*** %s ***" C_EOL C_EOL , x);
     #define print_subtitle(x,y) printf( C_EOL "[+] %s : %s" C_EOL , x, y);
-
     #define NOTICE "PEDump ~ follow @tfairane" C_EOL\
-    "Usage: %s [File]"
+    "Usage: %s [FILE]"
 
     DWORD RVAtoOFFSET(HANDLE hFileMap, const DWORD RVA);
 
@@ -44,11 +42,11 @@
                                    NULL );
 
         HANDLE hFileMapping = CreateFileMapping( hFile,
-                                             NULL,
-                                             PAGE_READWRITE,
-                                             0,
-                                             0,
-                                             0 );
+												 NULL,
+												 PAGE_READWRITE,
+												 0,
+												 0,
+												 0 );
 
         HANDLE hFileMap = MapViewOfFile( hFileMapping,
                                          FILE_MAP_ALL_ACCESS,
