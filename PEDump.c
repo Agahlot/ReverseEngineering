@@ -1,12 +1,12 @@
 /*\
-\ / Author ~ From   | Tawfik Airane ~ Paris
+\ / Author ~ From   | Toufik Airane ~ Paris
 / \ GitHub          | tfairane.github.com
 \ / Mail            | tf.airane@gmail.com
 / \ Twitter         | @tfairane
 \ /
 / \ File            | PEDump.c
 \ / Language        | C
-/ \ Brief           | Analyse PE File Headers and IAT dump
+/ \ Brief           | Analyse PE File Header && IAT dump
 \ /
 / \ Licence         | Ce code est totalement libre de droit.
 \ /                 | Je vous encourage à le partager et/ou le modifier.
@@ -17,163 +17,16 @@
     #include <stdlib.h>
     #include <windows.h>
     #define C_EOL "\n"
-    #define printx(x,y) printf("%s : %08x" C_EOL , x, y);
-    #define prints(x,y) printf("%s : %s" C_EOL , x, y);
-
+    #define printx(x,y) printf("%s : 0x%08x" C_EOL , x, y);
     #define print_dd(x,y) printf("%s : %08x" C_EOL , x, y);
 
-    #define print_title(x) printf( C_EOL C_EOL "%s" C_EOL C_EOL , x);
-    #define print_subtitle(x,y) printf( C_EOL "%s : %s" C_EOL , x, y);
+    #define print_title(x) printf( C_EOL C_EOL "*** %s ***" C_EOL C_EOL , x);
+    #define print_subtitle(x,y) printf( C_EOL "[+] %s : %s" C_EOL , x, y);
 
-    #define NOTICE "PE HEADERS DUMP 1->1 ( follow @tfairane )" C_EOL\
-                    "Usage: %s [File]"
-    /*/
-    typedef struct _IMAGE_DOS_HEADER {
-	WORD e_magic;
-	WORD e_cblp;
-	WORD e_cp;
-	WORD e_crlc;
-	WORD e_cparhdr;
-	WORD e_minalloc;
-	WORD e_maxalloc;
-	WORD e_ss;
-	WORD e_sp;
-	WORD e_csum;
-	WORD e_ip;
-	WORD e_cs;
-	WORD e_lfarlc;
-	WORD e_ovno;
-	WORD e_res[4];
-	WORD e_oemid;
-	WORD e_oeminfo;
-	WORD e_res2[10];
-	LONG e_lfanew;
-} IMAGE_DOS_HEADER,*PIMAGE_DOS_HEADER;
-    /*/
+    #define NOTICE "PEDump ~ follow @tfairane" C_EOL\
+    "Usage: %s [File]"
 
-    /*/
-    typedef struct _IMAGE_NT_HEADERS {
-    DWORD Signature;
-    IMAGE_FILE_HEADER FileHeader;
-    IMAGE_OPTIONAL_HEADER32 OptionalHeader;
-} IMAGE_NT_HEADERS32,*PIMAGE_NT_HEADERS32;
-    /*/
-
-    /*/
-    typedef struct _IMAGE_FILE_HEADER {
-	WORD Machine;
-	WORD NumberOfSections;
-	DWORD TimeDateStamp;
-	DWORD PointerToSymbolTable;
-	DWORD NumberOfSymbols;
-	WORD SizeOfOptionalHeader;
-	WORD Characteristics;
-} IMAGE_FILE_HEADER, *PIMAGE_FILE_HEADER;
-    /*/
-
-    /*/
-    typedef struct _IMAGE_OPTIONAL_HEADER {
-	WORD Magic;
-	BYTE MajorLinkerVersion;
-	BYTE MinorLinkerVersion;
-	DWORD SizeOfCode;
-	DWORD SizeOfInitializedData;
-	DWORD SizeOfUninitializedData;
-	DWORD AddressOfEntryPoint;
-	DWORD BaseOfCode;
-	DWORD BaseOfData;
-	DWORD ImageBase;
-	DWORD SectionAlignment;
-	DWORD FileAlignment;
-	WORD MajorOperatingSystemVersion;
-	WORD MinorOperatingSystemVersion;
-	WORD MajorImageVersion;
-	WORD MinorImageVersion;
-	WORD MajorSubsystemVersion;
-	WORD MinorSubsystemVersion;
-	DWORD Win32VersionValue;
-	DWORD SizeOfImage;
-	DWORD SizeOfHeaders;
-	DWORD CheckSum;
-	WORD Subsystem;
-	WORD DllCharacteristics;
-	DWORD SizeOfStackReserve;
-	DWORD SizeOfStackCommit;
-	DWORD SizeOfHeapReserve;
-	DWORD SizeOfHeapCommit;
-	DWORD LoaderFlags;
-	DWORD NumberOfRvaAndSizes;
-	IMAGE_DATA_DIRECTORY DataDirectory[IMAGE_NUMBEROF_DIRECTORY_ENTRIES];
-} IMAGE_OPTIONAL_HEADER32,*PIMAGE_OPTIONAL_HEADER32;
-    /*/
-
-    /*/
-    #define IMAGE_DIRECTORY_ENTRY_EXPORT            0
-    #define IMAGE_DIRECTORY_ENTRY_IMPORT            1
-    #define IMAGE_DIRECTORY_ENTRY_RESOURCE          2
-    #define IMAGE_DIRECTORY_ENTRY_EXCEPTION         3
-    #define IMAGE_DIRECTORY_ENTRY_SECURITY          4
-    #define IMAGE_DIRECTORY_ENTRY_BASERELOC         5
-    #define IMAGE_DIRECTORY_ENTRY_DEBUG             6
-    #define IMAGE_DIRECTORY_ENTRY_COPYRIGHT         7
-    #define IMAGE_DIRECTORY_ENTRY_ARCHITECTURE      7
-    #define IMAGE_DIRECTORY_ENTRY_GLOBALPTR         8
-    #define IMAGE_DIRECTORY_ENTRY_TLS               9
-    #define IMAGE_DIRECTORY_ENTRY_LOAD_CONFIG       10
-    #define IMAGE_DIRECTORY_ENTRY_BOUND_IMPORT      11
-    #define IMAGE_DIRECTORY_ENTRY_IAT               12
-    #define IMAGE_DIRECTORY_ENTRY_DELAY_IMPORT      13
-    #define IMAGE_DIRECTORY_ENTRY_COM_DESCRIPTOR    14
-    /*/
-
-    /*/
-    typedef struct _IMAGE_SECTION_HEADER {
-	BYTE Name[IMAGE_SIZEOF_SHORT_NAME];
-	union {
-		DWORD PhysicalAddress;
-		DWORD VirtualSize;
-	} Misc;
-	DWORD VirtualAddress;
-	DWORD SizeOfRawData;
-	DWORD PointerToRawData;
-	DWORD PointerToRelocations;
-	DWORD PointerToLinenumbers;
-	WORD NumberOfRelocations;
-	WORD NumberOfLinenumbers;
-	DWORD Characteristics;
-} IMAGE_SECTION_HEADER,*PIMAGE_SECTION_HEADER;
-    /*/
-
-    /*/
-    typedef struct _IMAGE_IMPORT_DESCRIPTOR {
-	_ANONYMOUS_UNION union {
-		DWORD Characteristics;
-		DWORD OriginalFirstThunk;
-	} DUMMYUNIONNAME;
-	DWORD TimeDateStamp;
-	DWORD ForwarderChain;
-	DWORD Name;
-	DWORD FirstThunk;
-} IMAGE_IMPORT_DESCRIPTOR,*PIMAGE_IMPORT_DESCRIPTOR;
-    /*/
-
-    /*/
-    typedef struct _IMAGE_THUNK_DATA32 {
-	union {
-		DWORD ForwarderString;
-		DWORD Function;
-		DWORD Ordinal;
-		DWORD AddressOfData;
-	} u1;
-} IMAGE_THUNK_DATA32,*PIMAGE_THUNK_DATA32;
-    /*/
-
-    /*/
-    typedef struct _IMAGE_IMPORT_BY_NAME {
-	WORD Hint;
-	BYTE Name[1];
-} IMAGE_IMPORT_BY_NAME,*PIMAGE_IMPORT_BY_NAME;
-    /*/
+    DWORD RVAtoOFFSET(HANDLE hFileMap, const DWORD RVA);
 
     int main(int argc, char *argv[])
     {
@@ -203,7 +56,6 @@
                                          0,
                                          0 );
 
-        DWORD dwTaille = 0;
         PIMAGE_DOS_HEADER hDOS;
         PIMAGE_NT_HEADERS hNT;
         PIMAGE_SECTION_HEADER hSection;
@@ -215,7 +67,30 @@
         hDOS = (PIMAGE_DOS_HEADER)hFileMap;// DOS HEADER
         hNT = (PIMAGE_NT_HEADERS)(hFileMap + hDOS->e_lfanew);// NT HEADER
 
-        print_title("** IMAGE_DOS_HEADER **");
+        print_title("IMAGE_DOS_HEADER");
+        /*/
+        typedef struct _IMAGE_DOS_HEADER {
+        WORD e_magic;
+        WORD e_cblp;
+        WORD e_cp;
+        WORD e_crlc;
+        WORD e_cparhdr;
+        WORD e_minalloc;
+        WORD e_maxalloc;
+        WORD e_ss;
+        WORD e_sp;
+        WORD e_csum;
+        WORD e_ip;
+        WORD e_cs;
+        WORD e_lfarlc;
+        WORD e_ovno;
+        WORD e_res[4];
+        WORD e_oemid;
+        WORD e_oeminfo;
+        WORD e_res2[10];
+        LONG e_lfanew;
+    } IMAGE_DOS_HEADER,*PIMAGE_DOS_HEADER;
+        /*/
         printx("e_magic",    hDOS->e_magic);//#define IMAGE_DOS_SIGNATURE 0x5A4D
         printx("e_cblp",     hDOS->e_cblp);
         printx("e_cp",       hDOS->e_cp);
@@ -236,10 +111,28 @@
         printx("e_res2",     hDOS->e_res2);
         printx("e_lfanew",   hDOS->e_lfanew);
 
-        print_title("** IMAGE_NT_HEADERS **");
+        print_title("IMAGE_NT_HEADERS");
+        /*/
+        typedef struct _IMAGE_NT_HEADERS {
+        DWORD Signature;
+        IMAGE_FILE_HEADER FileHeader;
+        IMAGE_OPTIONAL_HEADER32 OptionalHeader;
+    } IMAGE_NT_HEADERS32,*PIMAGE_NT_HEADERS32;
+        /*/
         printx("Signature",  hNT->Signature);//#define IMAGE_NT_SIGNATURE 0x00004550
 
-        print_title("** IMAGE_FILE_HEADER **");
+        print_title("IMAGE_FILE_HEADER");
+        /*/
+        typedef struct _IMAGE_FILE_HEADER {
+        WORD Machine;
+        WORD NumberOfSections;
+        DWORD TimeDateStamp;
+        DWORD PointerToSymbolTable;
+        DWORD NumberOfSymbols;
+        WORD SizeOfOptionalHeader;
+        WORD Characteristics;
+    } IMAGE_FILE_HEADER, *PIMAGE_FILE_HEADER;
+        /*/
         printx("Machine",                hNT->FileHeader.Machine);
         printx("NumberOfSections",       hNT->FileHeader.NumberOfSections);
         printx("TimeDateStamp",          hNT->FileHeader.TimeDateStamp);
@@ -248,7 +141,42 @@
         printx("SizeOfOptionalHeader",   hNT->FileHeader.SizeOfOptionalHeader);
         printx("Characteristics",        hNT->FileHeader.Characteristics);
 
-        print_title("** IMAGE_OPTIONAL_HEADER **");
+        print_title("IMAGE_OPTIONAL_HEADER");
+        /*/
+        typedef struct _IMAGE_OPTIONAL_HEADER {
+        WORD Magic;
+        BYTE MajorLinkerVersion;
+        BYTE MinorLinkerVersion;
+        DWORD SizeOfCode;
+        DWORD SizeOfInitializedData;
+        DWORD SizeOfUninitializedData;
+        DWORD AddressOfEntryPoint;
+        DWORD BaseOfCode;
+        DWORD BaseOfData;
+        DWORD ImageBase;
+        DWORD SectionAlignment;
+        DWORD FileAlignment;
+        WORD MajorOperatingSystemVersion;
+        WORD MinorOperatingSystemVersion;
+        WORD MajorImageVersion;
+        WORD MinorImageVersion;
+        WORD MajorSubsystemVersion;
+        WORD MinorSubsystemVersion;
+        DWORD Win32VersionValue;
+        DWORD SizeOfImage;
+        DWORD SizeOfHeaders;
+        DWORD CheckSum;
+        WORD Subsystem;
+        WORD DllCharacteristics;
+        DWORD SizeOfStackReserve;
+        DWORD SizeOfStackCommit;
+        DWORD SizeOfHeapReserve;
+        DWORD SizeOfHeapCommit;
+        DWORD LoaderFlags;
+        DWORD NumberOfRvaAndSizes;
+        IMAGE_DATA_DIRECTORY DataDirectory[IMAGE_NUMBEROF_DIRECTORY_ENTRIES];
+    } IMAGE_OPTIONAL_HEADER32,*PIMAGE_OPTIONAL_HEADER32;
+        /*/
         printx("Magic",                       hNT->OptionalHeader.Magic);
         printx("MajorLinkerVersion",          hNT->OptionalHeader.MajorLinkerVersion);
         printx("MinorLinkerVersion",          hNT->OptionalHeader.MinorLinkerVersion);
@@ -280,7 +208,25 @@
         printx("LoaderFlags",                 hNT->OptionalHeader.LoaderFlags);
         printx("NumberOfRvaAndSizes",         hNT->OptionalHeader.NumberOfRvaAndSizes);
 
-        print_title("** DataDirectory[] **");
+        print_title("DataDirectory");
+        /*/
+        #define IMAGE_DIRECTORY_ENTRY_EXPORT            0
+        #define IMAGE_DIRECTORY_ENTRY_IMPORT            1
+        #define IMAGE_DIRECTORY_ENTRY_RESOURCE          2
+        #define IMAGE_DIRECTORY_ENTRY_EXCEPTION         3
+        #define IMAGE_DIRECTORY_ENTRY_SECURITY          4
+        #define IMAGE_DIRECTORY_ENTRY_BASERELOC         5
+        #define IMAGE_DIRECTORY_ENTRY_DEBUG             6
+        #define IMAGE_DIRECTORY_ENTRY_COPYRIGHT         7
+        #define IMAGE_DIRECTORY_ENTRY_ARCHITECTURE      7
+        #define IMAGE_DIRECTORY_ENTRY_GLOBALPTR         8
+        #define IMAGE_DIRECTORY_ENTRY_TLS               9
+        #define IMAGE_DIRECTORY_ENTRY_LOAD_CONFIG       10
+        #define IMAGE_DIRECTORY_ENTRY_BOUND_IMPORT      11
+        #define IMAGE_DIRECTORY_ENTRY_IAT               12
+        #define IMAGE_DIRECTORY_ENTRY_DELAY_IMPORT      13
+        #define IMAGE_DIRECTORY_ENTRY_COM_DESCRIPTOR    14
+        /*/
         print_dd("[IMAGE_DIRECTORY_ENTRY_EXPORT].VirtualAddress", hNT->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_EXPORT].VirtualAddress);
         print_dd("[IMAGE_DIRECTORY_ENTRY_EXPORT].Size", hNT->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_EXPORT].Size);
         print_dd("[IMAGE_DIRECTORY_ENTRY_IMPORT].VirtualAddress", hNT->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_IMPORT].VirtualAddress);
@@ -314,7 +260,24 @@
         print_dd("[IMAGE_DIRECTORY_ENTRY_COM_DESCRIPTOR].VirtualAddress", hNT->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_COM_DESCRIPTOR].VirtualAddress);
         print_dd("[IMAGE_DIRECTORY_ENTRY_COM_DESCRIPTOR].Size", hNT->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_COM_DESCRIPTOR].Size);
 
-        print_title("** IMAGE_SECTION_HEADER **");
+        print_title("IMAGE_SECTION_HEADER");
+        /*/
+        typedef struct _IMAGE_SECTION_HEADER {
+        BYTE Name[IMAGE_SIZEOF_SHORT_NAME];
+        union {
+            DWORD PhysicalAddress;
+            DWORD VirtualSize;
+        } Misc;
+        DWORD VirtualAddress;
+        DWORD SizeOfRawData;
+        DWORD PointerToRawData;
+        DWORD PointerToRelocations;
+        DWORD PointerToLinenumbers;
+        WORD NumberOfRelocations;
+        WORD NumberOfLinenumbers;
+        DWORD Characteristics;
+    } IMAGE_SECTION_HEADER,*PIMAGE_SECTION_HEADER;
+        /*/
         int i;
         for(i=0; i < hNT->FileHeader.NumberOfSections; i++) {
             hSection = (PIMAGE_SECTION_HEADER) (hFileMap + hDOS->e_lfanew + sizeof(IMAGE_NT_HEADERS) + i*sizeof(IMAGE_SECTION_HEADER));// SECTION HEADER
@@ -331,37 +294,57 @@
             printx("Characteristics",       hSection->Characteristics);
         }
 
+        print_title("IMAGE_DIRECTORY_ENTRY_IMPORT");
         DWORD EntryExportVA = hNT->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_IMPORT].VirtualAddress;
         DWORD EntryExportSize = hNT->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_IMPORT].Size;
-        hEntryImport = (PIMAGE_IMPORT_DESCRIPTOR)(hFileMap + (DWORD)EntryExportVA);//IAT DUMP
+        /*/
+        typedef struct _IMAGE_IMPORT_DESCRIPTOR {
+        _ANONYMOUS_UNION union {
+            DWORD Characteristics;
+            DWORD OriginalFirstThunk;
+        } DUMMYUNIONNAME;
+        DWORD TimeDateStamp;
+        DWORD ForwarderChain;
+        DWORD Name;
+        DWORD FirstThunk;
+    } IMAGE_IMPORT_DESCRIPTOR,*PIMAGE_IMPORT_DESCRIPTOR;
+        /*/
+        hEntryImport = (PIMAGE_IMPORT_DESCRIPTOR)(hFileMap + RVAtoOFFSET(hFileMap, EntryExportVA));//IMAGE_DIRECTORY_ENTRY_IMPORT
 
-        print_title("** IMAGE_DIRECTORY_ENTRY_IMPORT **");
-        while(hEntryImport->Name) {
-        print_subtitle("Name",          hFileMap + hEntryImport->Name);
+        while(hEntryImport->FirstThunk) {
+        print_subtitle("Name",          hFileMap + RVAtoOFFSET(hFileMap, hEntryImport->Name));
         printx("OriginalFirstThunk",    hEntryImport->OriginalFirstThunk);
         printx("FirstThunk",            hEntryImport->FirstThunk);
         printx("Characteristics",       hEntryImport->Characteristics);
         printx("TimeDateStamp",         hEntryImport->TimeDateStamp);
         printx("ForwarderChain",        hEntryImport->ForwarderChain);
-
-        hOriginalFirstThunk = (PIMAGE_THUNK_DATA)(hFileMap + hEntryImport->OriginalFirstThunk);
-        hFirstThunk = (PIMAGE_THUNK_DATA)(hFileMap + hEntryImport->FirstThunk);
-
-            while(hFirstThunk->u1.AddressOfData)
+        /*/
+        typedef struct _IMAGE_THUNK_DATA {
+        union {
+            DWORD ForwarderString;
+            DWORD Function;
+            DWORD Ordinal;
+            DWORD AddressOfData;
+        } u1;
+    } IMAGE_THUNK_DATA,*PIMAGE_THUNK_DATA;
+        /*/
+        hOriginalFirstThunk = (PIMAGE_THUNK_DATA)(hFileMap + RVAtoOFFSET(hFileMap, hEntryImport->OriginalFirstThunk));
+        hFirstThunk = (PIMAGE_THUNK_DATA)(hFileMap + RVAtoOFFSET(hFileMap, hEntryImport->FirstThunk));
+            while(hOriginalFirstThunk->u1.AddressOfData)
             {
-            printx("u1.ForwarderString",   hFirstThunk->u1.ForwarderString);
-            printx("u1.Function",          hFirstThunk->u1.Function);
-            printx("u1.Ordinal",           hFirstThunk->u1.Ordinal);
-            printx("u1.AddressOfData",     hFirstThunk->u1.AddressOfData);
-
-            API = (PIMAGE_IMPORT_BY_NAME)(hFileMap + hFirstThunk->u1.AddressOfData);
+            /*/
+            typedef struct _IMAGE_IMPORT_BY_NAME {
+            WORD Hint;
+            BYTE Name[1];
+        } IMAGE_IMPORT_BY_NAME,*PIMAGE_IMPORT_BY_NAME;
+            /*/
+            API = (PIMAGE_IMPORT_BY_NAME)(hFileMap + RVAtoOFFSET(hFileMap, hOriginalFirstThunk->u1.AddressOfData));
             print_subtitle("Name", API->Name);
             printx("Hint", API->Hint);
-
+            printx("Function", hOriginalFirstThunk->u1.Function);
             hOriginalFirstThunk++;
             hFirstThunk++;
             }
-
         hEntryImport++;
         }
         UnmapViewOfFile(hFileMap);
@@ -370,3 +353,12 @@
 
         return 0;
     }
+
+DWORD RVAtoOFFSET(HANDLE hFileMap, const DWORD RVA) {
+        PIMAGE_DOS_HEADER hDOS = (PIMAGE_DOS_HEADER)hFileMap;
+        PIMAGE_NT_HEADERS hNT = (PIMAGE_NT_HEADERS)(hFileMap + hDOS->e_lfanew);
+        PIMAGE_SECTION_HEADER hSection = (PIMAGE_SECTION_HEADER)(hFileMap + hDOS->e_lfanew + sizeof(IMAGE_NT_HEADERS));
+        int i;
+        for(i=0; i < hNT->FileHeader.NumberOfSections && (hSection->VirtualAddress + hSection->Misc.VirtualSize) <= RVA; i++, hSection++);
+        return RVA - hSection->VirtualAddress + hSection->PointerToRawData;
+}
