@@ -10,21 +10,20 @@
 \ /
 / \ Licence         | Ce code est totalement libre.
 \ /                 | Je vous encourage à le partager et/ou le modifier.
-/ \                 | « Un grand pouvoir implique de grandes responsabilités. »
+/ \                 | Un grand pouvoir implique de grandes responsabilités.
 \*/
 
     #include <stdio.h>
     #include <windows.h>
     #include <TlHelp32.h>
     #define C_EOL "\n"
-    #define NOTICE "Usage : %s [OPTION] [PID] || follow @tfairane" C_EOL\
+    #define NOTICE "Usage : %s [Option] [PID] || follow @tfairane" C_EOL\
                     "-p : list all process" C_EOL\
-                    "-m [PID] : retrieve all current handle",argv[0]
+                    "-m [PID] : retrieve current handle",argv[0]
     typedef int bool;
-
     void ps();//Report Process Status
-    void ms(int pid);// Report Module Status
-    bool is64(int pid);// Is 64 or 32 bits ?
+    void ms(int pid);// Report Current Handle
+    bool is64(int pid);// Is Process 64 or 32 bits ?
 
     int main(int argc, char* argv[])
     {
@@ -33,18 +32,15 @@
             case 1:
                 printf(NOTICE);
                 break;
-
             case 2:
                 if(!strcmp(argv[1],"-p"))
                     ps();
                 break;
-
             case 3:
                 if(!strcmp(argv[1],"-m"))
                     ms(atoi(argv[2]));
                 break;
         };
-
         return EXIT_SUCCESS;
     }
 
@@ -52,7 +48,7 @@
         PROCESSENTRY32 ProcessEntry = { 0 };
         ProcessEntry.dwSize = sizeof(PROCESSENTRY32);
         HANDLE Snapshot32Process = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
-
+		
         if(Snapshot32Process == INVALID_HANDLE_VALUE)
             exit(EXIT_FAILURE);
 
@@ -86,8 +82,8 @@
     }
 
     bool is64(int pid) {
-        bool is64;
         typedef bool(*pis64)(HANDLE, bool);
+        bool is64;
         pis64 fis64;
         fis64 = (pis64)GetProcAddress(GetModuleHandle("kernel32"),"IsWow64Process");
         fis64(OpenProcess(PROCESS_ALL_ACCESS, FALSE, pid), (bool)&is64);

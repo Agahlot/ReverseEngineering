@@ -6,11 +6,11 @@
 \ /
 / \ File            | EntryPointRedirection.cpp
 \ / Language        | C++
-/ \ Brief           | POC AddressOfEntryPoint Redirection
+/ \ Brief           | AddressOfEntryPoint Rewritting
 \ /
 / \ Licence         | Ce code est totalement libre.
 \ /                 | Je vous encourage à le partager et/ou le modifier.
-/ \                 | « Un grand pouvoir implique de grandes responsabilités. »
+/ \                 | Un grand pouvoir implique de grandes responsabilités.
 \*/
 
     #include <iostream>
@@ -36,15 +36,15 @@
         IMAGE_NT_HEADERS hNT;
 
         SetFilePointer(hFile, 0, 0, FILE_BEGIN);
-        ReadFile(hFile, &hDOS, sizeof(IMAGE_DOS_HEADER), &dwTaille, NULL);  // DOS HEADER
+        ReadFile(hFile, &hDOS, sizeof(IMAGE_DOS_HEADER), &dwTaille, NULL);// DOS HEADER
 
         SetFilePointer(hFile, hDOS.e_lfanew, 0, FILE_BEGIN);
-        ReadFile(hFile, &hNT, sizeof(IMAGE_NT_HEADERS), &dwTaille, NULL);   // NT HEADER
+        ReadFile(hFile, &hNT, sizeof(IMAGE_NT_HEADERS), &dwTaille, NULL);// NT HEADER
 
         cout << hex << "Ex AddressOfEntryPoint Offset : " << hNT.OptionalHeader.AddressOfEntryPoint << endl;
         hNT.OptionalHeader.AddressOfEntryPoint = (DWORD) strtoul(argv[2], NULL, 16);
         SetFilePointer(hFile, hDOS.e_lfanew, 0, FILE_BEGIN);
-        WriteFile(hFile, &hNT, sizeof(hNT), &dwTaille, NULL);               // Patch NT HEADER
+        WriteFile(hFile, &hNT, sizeof(hNT), &dwTaille, NULL);// Patch NT HEADER
         cout << hex << "New  AddressOfEntryPoint Offset : " << hNT.OptionalHeader.AddressOfEntryPoint << endl;
 
         CloseHandle(hFile);

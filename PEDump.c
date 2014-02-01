@@ -6,11 +6,11 @@
 \ /
 / \ File            | PEDump.c
 \ / Language        | C
-/ \ Brief           | Analyse PE File Header && IAT dump
+/ \ Brief           | PEDump && Analyse
 \ /
 / \ Licence         | Ce code est totalement libre.
 \ /                 | Je vous encourage à le partager et/ou le modifier.
-/ \                 | « Un grand pouvoir implique de grandes responsabilités. »
+/ \                 | Un grand pouvoir implique de grandes responsabilités.
 \*/
 
     #include <stdio.h>
@@ -22,7 +22,7 @@
     #define print_title(x) printf( C_EOL C_EOL "*** %s ***" C_EOL C_EOL , x);
     #define print_subtitle(x,y) printf( C_EOL "[+] %s : %s" C_EOL , x, y);
     #define NOTICE "PEDump ~ follow @tfairane" C_EOL\
-    "Usage: %s [FILE]"
+    "Usage : %s [File]"
 
     DWORD RVAtoOFFSET(HANDLE hFileMap, const DWORD RVA);
 

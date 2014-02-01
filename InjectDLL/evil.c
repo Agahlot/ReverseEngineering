@@ -6,11 +6,11 @@
 \ /
 / \ File            | evil.c ~ compile to evil.dll
 \ / Language        | C
-/ \ Brief           | poc evil dll can be injected in process
+/ \ Brief           | Evil DLL Can Be Injected
 \ /
 / \ Licence         | Ce code est totalement libre.
 \ /                 | Je vous encourage à le partager et/ou le modifier.
-/ \                 | « Un grand pouvoir implique de grandes responsabilités. »
+/ \                 | Un grand pouvoir implique de grandes responsabilités.
 \*/
 
     #include <windows.h>

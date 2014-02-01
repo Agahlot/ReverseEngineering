@@ -6,11 +6,11 @@
 \ /
 / \ File            | injectDLL.cpp
 \ / Language        | C++
-/ \ Brief           | InjectDLL into Process RING 3
+/ \ Brief           | InjectDLL into Win*32 Process RING 3
 \ /
 / \ Licence         | Ce code est totalement libre.
 \ /                 | Je vous encourage à le partager et/ou le modifier.
-/ \                 | « Un grand pouvoir implique de grandes responsabilités. »
+/ \                 | Un grand pouvoir implique de grandes responsabilités.
 \*/
 
     #include <iostream>
@@ -25,9 +25,9 @@
 
     int main( int argc, char *argv[])
     {
-        cout << "InjectDLL into Process RING 3 | follow @tfairane" << endl;
+        cout << "InjectDLL into Win*32 Process RING 3 | follow @tfairane" << endl;
         if(argc!=3) {
-            cout << "[NOTICE] " << argv[0] << " [Process Name] [FULL Path DLL]" << endl;
+            cout << "Usage : " << argv[0] << "[Process Name] [Full Path Dll]" << endl;
             exit(EXIT_FAILURE);
         }
 
@@ -35,7 +35,7 @@
         int sPathDll    =   strlen(PathDll);
         int pid         =   GetProcessPidByName(argv[1]);
 
-        cout << "[Target]" << endl << " Name : " << argv[1] << endl << " PID : " << pid << endl;
+        cout << "[Target] " << endl << "Name : " << argv[1] << endl << "PID : " << pid << endl;
 
         HANDLE hProcess     =   OpenProcess( PROCESS_ALL_ACCESS, FALSE, pid);
         if(hProcess == NULL) {

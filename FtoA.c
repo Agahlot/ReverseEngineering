@@ -10,7 +10,7 @@
 \ /
 / \ Licence         | Ce code est totalement libre.
 \ /                 | Je vous encourage à le partager et/ou le modifier.
-/ \                 | « Un grand pouvoir implique de grandes responsabilités. »
+/ \                 | Un grand pouvoir implique de grandes responsabilités.
 \*/
 
     #include<stdio.h>
@@ -37,7 +37,7 @@
                 return 0x1;
         }
 
-        printf("[~] %s 0x%08x",argv[2], hFunc);
+        printf("[+] %s 0x%08x", argv[2], hFunc);
         FreeLibrary(hDll);
         return 0x0;
     }
