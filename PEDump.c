@@ -304,12 +304,7 @@ int main(int argc, char *argv[]) {
 		printx("NumberOfLinenumbers", hSection->NumberOfLinenumbers);
 		printx("Characteristics", hSection->Characteristics);
 	}
-
-	print_title("IMAGE_DIRECTORY_ENTRY_IMPORT alias Import Address Table (IAT)");
-	DWORD EntryExportVA =
-			hNT->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_IMPORT].VirtualAddress;
-	DWORD EntryExportSize =
-			hNT->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_IMPORT].Size;
+	
 	/*/
 	 typedef struct _IMAGE_IMPORT_DESCRIPTOR {
 	 _ANONYMOUS_UNION union {
@@ -322,8 +317,13 @@ int main(int argc, char *argv[]) {
 	 DWORD FirstThunk;
 	 } IMAGE_IMPORT_DESCRIPTOR,*PIMAGE_IMPORT_DESCRIPTOR;
 	 /*/
+	print_title("IMAGE_DIRECTORY_ENTRY_IMPORT alias Import Address Table (IAT)");
+	DWORD EntryExportVA =
+			hNT->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_IMPORT].VirtualAddress;
+	DWORD EntryExportSize =
+			hNT->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_IMPORT].Size;
 	hEntryImport = (PIMAGE_IMPORT_DESCRIPTOR) (hFileMap
-			+ RVAtoOFFSET(hFileMap, EntryExportVA)); //IMAGE_DIRECTORY_ENTRY_IMPORT
+			+ RVAtoOFFSET(hFileMap, EntryExportVA));
 
 	while (hEntryImport->FirstThunk) {
 		print_subtitle("[+] Name",
