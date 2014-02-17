@@ -368,7 +368,7 @@ int main(int argc, char *argv[]) {
 	UnmapViewOfFile(hFileMap);
 	CloseHandle(hFileMapping);
 	CloseHandle(hFile);
-	printf("[END OF DUMP]");
+	printf("[+] END OF DOOM [+]");
 	return 0;
 }
 
