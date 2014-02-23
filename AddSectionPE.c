@@ -1,89 +1,123 @@
-/*\
-\ / Author ~ From   | Toufik Airane ~ Paris
-/ \ GitHub          | tfairane.github.com
-\ / Mail            | tf.airane@gmail.com
-/ \ Twitter         | @tfairane
-\ /
-/ \ File            | addsectionPE.c
-\ / Language        | C
-/ \ Brief           | Add Section into PE Format MS Windows
-\ /
-/ \ Licence         | Ce code est totalement libre.
-\ /                 | Je vous encourage à le partager et/ou le modifier.
-/ \                 | L'usage de ce programme relève de votre entière responsabilité.
-\*/
+#include<stdio.h>
+#include <windows.h>
+#define C_EOL "\n"
 
-    #include<stdio.h>
-    #include <windows.h>
-    #define C_EOL "\n"
+DWORD alignment(DWORD base, DWORD address);
+int main(int argc, char *argv[]) {
+	if (argc != 2)
+		exit(EXIT_FAILURE);
 
-    DWORD alignment(DWORD base, DWORD address);
-    int main(int argc, char *argv[])
-    {
-        if(argc!=2)
-            exit(EXIT_FAILURE);
+	HANDLE hFile = CreateFile(argv[1], GENERIC_WRITE | GENERIC_READ,
+	FILE_SHARE_WRITE | FILE_SHARE_READ, NULL, OPEN_EXISTING,
+	FILE_ATTRIBUTE_NORMAL, NULL);
 
-        HANDLE hFile = CreateFile( argv[1],
-                                   GENERIC_WRITE|GENERIC_READ,
-                                   FILE_SHARE_WRITE|FILE_SHARE_READ,
-                                   NULL,
-                                   OPEN_EXISTING,
-                                   FILE_ATTRIBUTE_NORMAL,
-                                   NULL );
+	if (hFile == INVALID_HANDLE_VALUE)
+		exit(EXIT_FAILURE);
 
-        if(hFile == INVALID_HANDLE_VALUE)
-            exit(EXIT_FAILURE);
+	/*
+	 * Fix Pattern
+	 */
+	char pattern = 0x90;
+	/*
+	 * Shellcode JMP EntrypointRedirection
+	 * E9 DWORD : Jump near, relative, displacement relative to next instruction
+	 */
+	char shellcode[] = "\xE9";
+	DWORD sizeofshellcode = strlen(shellcode) * sizeof(char);
 
-        char pattern = 0x90;//PATTERN
-        char shellcode[] = "\xE9";//JMP
-        DWORD sizeofshellcode = strlen(shellcode) * sizeof(char);
+	/*
+	 * DUMP PE section headers
+	 */
+	DWORD dwTaille = 0;
+	IMAGE_DOS_HEADER hDOS;
+	IMAGE_NT_HEADERS hNT;
+	IMAGE_SECTION_HEADER hSection;
+	IMAGE_SECTION_HEADER ownSection;
+	SetFilePointer(hFile, 0, 0, FILE_BEGIN);
+	ReadFile(hFile, &hDOS, sizeof(IMAGE_DOS_HEADER), &dwTaille, NULL);
+	SetFilePointer(hFile, hDOS.e_lfanew, 0, FILE_BEGIN);
+	ReadFile(hFile, &hNT, sizeof(IMAGE_NT_HEADERS), &dwTaille, NULL);
 
-        DWORD dwTaille = 0;
-        IMAGE_DOS_HEADER hDOS;
-        IMAGE_NT_HEADERS hNT;
-        IMAGE_SECTION_HEADER hSection;
-        IMAGE_SECTION_HEADER ownSection;
+	for (int i = 0; i < hNT.FileHeader.NumberOfSections; i++)
+		ReadFile(hFile, &hSection, sizeof(IMAGE_SECTION_HEADER), &dwTaille,
+		NULL);
 
-        SetFilePointer(hFile, 0, 0, FILE_BEGIN);
-        ReadFile(hFile, &hDOS, sizeof(IMAGE_DOS_HEADER), &dwTaille, NULL);// DOS HEADER
-        SetFilePointer(hFile, hDOS.e_lfanew, 0, FILE_BEGIN);
-        ReadFile(hFile, &hNT, sizeof(IMAGE_NT_HEADERS), &dwTaille, NULL);// NT HEADER
+	/*
+	 * Copy last section
+	 */
+	ownSection = hSection;
+	/*
+	 * Craft own section
+	 */
+	memcpy(ownSection.Name, "FOOBAR", 8);
+	ownSection.Misc.VirtualSize = alignment(hNT.OptionalHeader.SectionAlignment,
+			sizeofshellcode);
+	ownSection.VirtualAddress = alignment(hNT.OptionalHeader.SectionAlignment,
+			hSection.VirtualAddress + hSection.Misc.VirtualSize);
+	ownSection.SizeOfRawData = alignment(hNT.OptionalHeader.FileAlignment,
+			sizeofshellcode);
+	ownSection.PointerToRawData = alignment(hNT.OptionalHeader.FileAlignment,
+			hSection.PointerToRawData + hSection.SizeOfRawData);
 
-        int i;
-        for(i=0; i < hNT.FileHeader.NumberOfSections; i++)
-            ReadFile(hFile, &hSection, sizeof(IMAGE_SECTION_HEADER), &dwTaille, NULL);
+	/*
+	 * Put privilege of the section
+	 */
+	ownSection.Characteristics = IMAGE_SCN_MEM_WRITE + IMAGE_SCN_MEM_READ
+			+ IMAGE_SCN_MEM_EXECUTE + IMAGE_SCN_MEM_SHARED + IMAGE_SCN_CNT_CODE;
+	ownSection.Misc.PhysicalAddress = ownSection.Misc.VirtualSize;
+	ownSection.PointerToRelocations = 0x0;
+	ownSection.PointerToLinenumbers = 0x0;
+	ownSection.NumberOfRelocations = 0x0;
+	ownSection.NumberOfLinenumbers = 0x0;
 
-        ownSection = hSection;
+	/*
+	 * Add own section
+	 */
+	WriteFile(hFile, &ownSection, sizeof(IMAGE_SECTION_HEADER), &dwTaille,
+	NULL);
 
-        memcpy(ownSection.Name, "FOOBAR", 8);
-        ownSection.Misc.VirtualSize = alignment(hNT.OptionalHeader.SectionAlignment, sizeofshellcode);
-        ownSection.VirtualAddress = alignment(hNT.OptionalHeader.SectionAlignment, hSection.VirtualAddress + hSection.Misc.VirtualSize);;
-        ownSection.SizeOfRawData = alignment(hNT.OptionalHeader.FileAlignment, sizeofshellcode);
-        ownSection.PointerToRawData = alignment(hNT.OptionalHeader.FileAlignment, hSection.PointerToRawData + hSection.SizeOfRawData);
-        ownSection.Characteristics = IMAGE_SCN_MEM_WRITE + IMAGE_SCN_MEM_READ + IMAGE_SCN_MEM_EXECUTE + IMAGE_SCN_MEM_SHARED + IMAGE_SCN_CNT_CODE;
-        ownSection.Misc.PhysicalAddress;
-        ownSection.PointerToRelocations = 0x0;
-        ownSection.PointerToLinenumbers = 0x0;
-        ownSection.NumberOfRelocations = 0x0;
-        ownSection.NumberOfLinenumbers = 0x0;
-        WriteFile(hFile, &ownSection, sizeof(IMAGE_SECTION_HEADER), &dwTaille, NULL);//ADD SECTION HEADER
+	/*
+	 * Write shellcode
+	 */
+	SetFilePointer(hFile, ownSection.PointerToRawData, 0, FILE_BEGIN);
+	WriteFile(hFile, &shellcode, sizeofshellcode, &dwTaille, NULL);
 
-        SetFilePointer(hFile, ownSection.PointerToRawData, 0, FILE_BEGIN);
-        WriteFile(hFile, &shellcode, sizeofshellcode, &dwTaille, NULL);//WRITE SHELLCODE
+	/*
+	 * Calculate and Write Original AddressOfEntryPoint
+	 * Original AddressOfEntryPoint is less than VirtualAddress of the own section
+	 * This is a relative jump
+	 */
+	DWORD EntryPointRedirection = hNT.OptionalHeader.AddressOfEntryPoint
+			- ownSection.VirtualAddress - sizeof(DWORD);
+	WriteFile(hFile, &EntryPointRedirection, sizeof(DWORD), &dwTaille, NULL);
 
-        for(i=0; i<hNT.OptionalHeader.FileAlignment-sizeofshellcode; i++)
-        WriteFile(hFile, &pattern, sizeof(char), &dwTaille, NULL);//PATTERN
+	/*
+	 * Write pattern to fill empty
+	 */
+	for (unsigned int i = 0; i < ownSection.SizeOfRawData - sizeofshellcode;
+			i++)
+		WriteFile(hFile, &pattern, sizeof(char), &dwTaille, NULL);
 
-        hNT.FileHeader.NumberOfSections++;
-        hNT.OptionalHeader.SizeOfImage += hNT.OptionalHeader.FileAlignment;
-        hNT.OptionalHeader.AddressOfEntryPoint = ownSection.VirtualAddress;//PATCH ADDR OF ENTRYPOINT
-        SetFilePointer(hFile, hDOS.e_lfanew, 0, FILE_BEGIN);
-        WriteFile(hFile, &hNT, sizeof(IMAGE_NT_HEADERS), &dwTaille, NULL);//PATCH NT HEADER
+	/*
+	 * Patch NT header :
+	 * - increase NumberOfSections
+	 * - recalculate SizeOfImage
+	 * - AddressOfEntryPoint redirection
+	 */
+	hNT.FileHeader.NumberOfSections++;
+	hNT.OptionalHeader.SizeOfImage = alignment(hNT.OptionalHeader.FileAlignment,
+			hNT.OptionalHeader.SizeOfImage + ownSection.SizeOfRawData);
+	hNT.OptionalHeader.AddressOfEntryPoint = ownSection.VirtualAddress;
+	SetFilePointer(hFile, hDOS.e_lfanew, 0, FILE_BEGIN);
+	WriteFile(hFile, &hNT, sizeof(IMAGE_NT_HEADERS), &dwTaille, NULL);
 
-        CloseHandle(hFile);
-        return 0;
-    }
+	CloseHandle(hFile);
+	return 0;
+}
 
-    DWORD alignment(DWORD base, DWORD address) {
-    return (address % base == 0) ? address : (((address / base) + 1) * base);
-    }
+/*
+ * Calculate Alignment between base and address
+ */
+DWORD alignment(DWORD base, DWORD address) {
+	return (address % base == 0) ? address : (((address / base) + 1) * base);
+}
