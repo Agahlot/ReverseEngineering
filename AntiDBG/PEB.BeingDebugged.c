@@ -6,21 +6,16 @@ typedef DWORD (*pNtQueryInformationProcess)(HANDLE, enum PROCESSINFOCLASS,
 
 int main(int argc, char *argv[]) {
 
-	DWORD sReturn;
-	PROCESS_BASIC_INFORMATION ProcessInformation;
 	PPEB PEB;
-	PRTL_USER_PROCESS_PARAMETERS UPP;
-	PPEB_LDR_DATA LDR;
-
+	PROCESS_BASIC_INFORMATION ProcessInformation;
+	DWORD sReturn;
 	pNtQueryInformationProcess NtQueryInformationProcess =
 			(pNtQueryInformationProcess) GetProcAddress(
-			LoadLibrary("Ntdll.dll"), "NtQueryInformationProcess");
+					LoadLibrary("Ntdll.dll"), "NtQueryInformationProcess");
 	NtQueryInformationProcess(GetCurrentProcess(), ProcessBasicInformation,
 			&ProcessInformation, sizeof(PROCESS_BASIC_INFORMATION), &sReturn);
-
 	PEB = (PPEB) ProcessInformation.PebBaseAddress;
-	UPP = (PRTL_USER_PROCESS_PARAMETERS) PEB->ProcessParameters;
-	LDR = (PPEB_LDR_DATA) PEB->Ldr;
 
+	printf("Is there a debugger ? %s !", PEB->BeingDebugged ? "Yes" : "No");
 	return 0x0;
 }
