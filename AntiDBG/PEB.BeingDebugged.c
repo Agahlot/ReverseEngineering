@@ -4,8 +4,7 @@
 typedef DWORD (*pNtQueryInformationProcess)(HANDLE, enum PROCESSINFOCLASS,
 		PVOID, ULONG, PULONG);
 
-int main(int argc, char *argv[]) {
-
+int main() {
 	PPEB PEB;
 	PROCESS_BASIC_INFORMATION ProcessInformation;
 	DWORD sReturn;
