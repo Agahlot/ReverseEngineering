@@ -1,5 +1,6 @@
 #ifndef _MapPE_H
 #define _MapPE_H
+#include<assert.h>
 
 HANDLE MapPE_open(const char *file) {
 	HANDLE hFile = CreateFile(file,
@@ -25,15 +26,16 @@ PIMAGE_DOS_HEADER MapPE_DOS(HANDLE hFileMap) {
 }
 
 PIMAGE_NT_HEADERS MapPE_NT(HANDLE hFileMap) {
-return (PIMAGE_NT_HEADERS) (hFileMap + MapPE_DOS(hFileMap)->e_lfanew);
+    return (PIMAGE_NT_HEADERS) (hFileMap + MapPE_DOS(hFileMap)->e_lfanew);
 }
 
-PIMAGE_SECTION_HEADER MapPE_SECTIONS(HANDLE hFileMap) {
-return (PIMAGE_SECTION_HEADER) (hFileMap + MapPE_DOS(hFileMap)->e_lfanew + sizeof(IMAGE_NT_HEADERS));
+PIMAGE_SECTION_HEADER MapPE_SECTIONS(HANDLE hFileMap, int i) {
+    assert(i < MapPE_NT(hFileMap)->FileHeader.NumberOfSections);
+    return (PIMAGE_SECTION_HEADER) (hFileMap + MapPE_DOS(hFileMap)->e_lfanew + sizeof(IMAGE_NT_HEADERS) + sizeof(IMAGE_SECTION_HEADER) * i);
 }
 
 DWORD RVAtoOFFSET(HANDLE hFileMap, const DWORD RVA) {
-	PIMAGE_SECTION_HEADER hSection = (PIMAGE_SECTION_HEADER) MapPE_SECTIONS(hFileMap);
+	PIMAGE_SECTION_HEADER hSection = (PIMAGE_SECTION_HEADER) MapPE_SECTIONS(hFileMap, 0);
 	int i; for (i = 0;
 	i < MapPE_NT(hFileMap)->FileHeader.NumberOfSections && (hSection->VirtualAddress + hSection->Misc.VirtualSize) <= RVA; i++, hSection++);
 	return RVA - hSection->VirtualAddress + hSection->PointerToRawData;
