@@ -1,8 +1,9 @@
 #include<time.h>
+
 int main() {
 	int antidbg = clock();
 	/*
-	 // Routine du Programme à protége
+	 // Routine du Programme à protéger
 	 */
 	if (clock() - antidbg > 100) {
 		printf("Anti-Debugging Protection");

@@ -10,14 +10,14 @@ int main(int argc, char *argv[]) {
 	HMODULE hDll;
 	hDll = LoadLibrary(argv[1]);
 	if (!hDll) {
-		printf("[#] LoadLibrary() : Error");
+		printf("[-] LoadLibrary() : Error");
 		return 0x1;
 	}
 
 	FARPROC hFunc;
 	hFunc = GetProcAddress(hDll, argv[2]);
 	if (!hFunc) {
-		printf("[#] GetProcAddress() : Error");
+		printf("[-] GetProcAddress() : Error");
 		FreeLibrary(hDll);
 		return 0x1;
 	}

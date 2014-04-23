@@ -1,9 +1,6 @@
-#ifndef _WINDOWS_H
-#include<windows.h>
-#endif /* _WINDOWS_H */
-
 #ifndef _PEB_H
 #define _PEB_H
+
 typedef LPVOID* PPVOID;
 typedef struct _LSA_UNICODE_STRING {
 	USHORT Length;

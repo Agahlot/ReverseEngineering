@@ -1,5 +1,5 @@
 #include<stdio.h>
-#include<PEB.h>
+#include<MapPE/PEB.h>
 
 typedef DWORD (*pNtQueryInformationProcess)(HANDLE, enum PROCESSINFOCLASS,
 		PVOID, ULONG, PULONG);
