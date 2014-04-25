@@ -1,9 +1,9 @@
 global _main
+extern _printf
 
 SECTION .text
 next:
-mov eax, 0x7635c5b9 ;Hard Offset 'printf' msvcrt.dll
-call eax
+call _printf
 add esp, 4
 ret 0x0
 

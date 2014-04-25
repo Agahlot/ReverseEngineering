@@ -13,6 +13,5 @@ push eax
 push helloworld
 call _printf
 pop ebp
-pop ebp
-;add esp, 8
+pop ebp ;add esp, 8
 ret 0x0

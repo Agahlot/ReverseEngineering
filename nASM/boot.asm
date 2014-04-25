@@ -17,5 +17,5 @@ mov ah, 0x13 ;Write string
 int 0x10
 
 jmp $
-times 510-($-$$) db 0 ; 520 KB
+times 510-($-$$) db 0 ;520 KB
 dw 0xAA55 ;Magic Boot
