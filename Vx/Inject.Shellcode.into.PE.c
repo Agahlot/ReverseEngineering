@@ -1,6 +1,5 @@
 #include<stdio.h>
-#include <windows.h>
-#define C_EOL "\n"
+#include<windows.h>
 
 DWORD alignment(DWORD base, DWORD address);
 int main(int argc, char *argv[]) {
