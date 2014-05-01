@@ -151,18 +151,54 @@ typedef struct _PEB {
 //http://en.wikipedia.org/wiki/Process_Environment_Block
 
 typedef struct _PROCESS_BASIC_INFORMATION {
-	PVOID Reserved1;
+	long ExitStatus;
 	PPEB PebBaseAddress;
-	PVOID Reserved2[2];
-	ULONG_PTR UniqueProcessId;
-	PVOID Reserved3;
-} PROCESS_BASIC_INFORMATION;
+	unsigned long AffinityMask;
+	long BasePriority;
+	unsigned long UniqueProcessId;
+	unsigned long InheritedFromUniqueProcessId;
+}PROCESS_BASIC_INFORMATION, *PPROCESS_BASIC_INFORMATION;
 
 enum PROCESSINFOCLASS {
 	ProcessBasicInformation = 0,
+	ProcessQuotaLimits,
+	ProcessIoCounters,
+	ProcessVmCounters,
+	ProcessTimes,
+	ProcessBasePriority,
+	ProcessRaisePriority,
 	ProcessDebugPort = 7,
-	ProcessWow64Information2 = 6,
+	ProcessExceptionPort,
+	ProcessAccessToken,
+	ProcessLdtInformation,
+	ProcessLdtSize,
+	ProcessDefaultHardErrorMode,
+	ProcessIoPortHandlers, //Only ring 0
+	ProcessPooledUsageAndLimits,
+	ProcessWorkingSetWatch,
+	ProcessUserModeIOPL,
+	ProcessEnableAlignmentFaultFixup,
+	ProcessPriorityClass,
+	ProcessWx86Information,
+	ProcessHandleCount,
+	ProcessAffinityMask,
+	ProcessPriorityBoost,
+	MaxProcessInfoClass,
+	ProcessWow64Information = 26
 	ProcessImageFileName = 27,
+	ProcessLUIDDeviceMapsEnabled,
 	ProcessBreakOnTermination = 29
+	ProcessDebugObjectHandle,//30
+	ProcessDebugFlags,
+	ProcessHandleTracing,
+	ProcessIoPriority,
+	ProcessExecuteFlags,
+	ProcessTlsInformation,//35
+	ProcessCookie,
+	ProcessImageInformation,//Only Win XP SP2
+	ProcessCycleTime,
+	ProcessPagePriority,
+	ProcessInstrumentationCallback,
+	MaxProcessInfoClass
 };
 #endif /* PEB_H_ */
