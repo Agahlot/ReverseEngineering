@@ -18,7 +18,14 @@ HANDLE MapPE_open(const char *file) {
 	HANDLE hFileMap = MapViewOfFile(hFileMapping,
 	FILE_MAP_ALL_ACCESS, 0, 0, 0);
 
+	CloseHandle(hFile);
+	CloseHandle(hFileMapping);
+
 	return hFileMap;
+}
+
+void MapPE_close(HANDLE hFileMap) {
+UnmapViewOfFile(hFileMap);
 }
 
 PIMAGE_DOS_HEADER MapPE_DOS(HANDLE hFileMap) {

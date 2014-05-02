@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <windows.h>
+#include <MapPE.h>
 #define C_EOL "\n"
 #define printx(x,y) printf("%-32s : 0x%08x" C_EOL, x, y);
 #define print_dd(x,y) printf("%-52s : %08x" C_EOL, x, y);
@@ -10,38 +11,21 @@
     "Usage : %s <win32 file>" C_EOL\
     "Report bugs : tf.airane@gmail.com" C_EOL, argv[0]
 
-DWORD RVAtoOFFSET(HANDLE hFileMap, const DWORD RVA);
-
 int main(int argc, char *argv[]) {
 	if (argc != 2)
 		exit(EXIT_FAILURE);
 	printf(NOTICE);
 
-	HANDLE hFile = CreateFile(argv[1],
-	GENERIC_WRITE | GENERIC_READ,
-	FILE_SHARE_WRITE | FILE_SHARE_READ,
-	NULL,
-	OPEN_EXISTING,
-	FILE_ATTRIBUTE_NORMAL,
-	NULL);
-
-	HANDLE hFileMapping = CreateFileMapping(hFile,
-	NULL,
-	PAGE_READWRITE, 0, 0, 0);
-
-	HANDLE hFileMap = MapViewOfFile(hFileMapping,
-	FILE_MAP_ALL_ACCESS, 0, 0, 0);
-
-	PIMAGE_DOS_HEADER hDOS;
-	PIMAGE_NT_HEADERS hNT;
+	HANDLE hFileMap = MapPE_open(argv[1]);
+	PIMAGE_DOS_HEADER hDOS = MapPE_DOS(hFileMap);
+	;
+	PIMAGE_NT_HEADERS hNT = MapPE_NT(hFileMap);
+	;
 	PIMAGE_SECTION_HEADER hSection;
 	PIMAGE_IMPORT_DESCRIPTOR hEntryImport;
 	PIMAGE_THUNK_DATA hOriginalFirstThunk;
 	PIMAGE_THUNK_DATA hFirstThunk;
 	PIMAGE_IMPORT_BY_NAME API;
-
-	hDOS = (PIMAGE_DOS_HEADER) hFileMap;
-	hNT = (PIMAGE_NT_HEADERS) (hFileMap + hDOS->e_lfanew);
 
 	/*/
 	 typedef struct _IMAGE_DOS_HEADER {
@@ -67,7 +51,8 @@ int main(int argc, char *argv[]) {
 	 } IMAGE_DOS_HEADER,*PIMAGE_DOS_HEADER;
 	 /*/
 	print_title("IMAGE_DOS_HEADER");
-	printx("e_magic", hDOS->e_magic); //#define IMAGE_DOS_SIGNATURE 0x5A4D
+	//#define IMAGE_DOS_SIGNATURE 0x5A4D
+	printx("e_magic", hDOS->e_magic);
 	printx("e_cblp", hDOS->e_cblp);
 	printx("e_cp", hDOS->e_cp);
 	printx("e_crlc", hDOS->e_crlc);
@@ -95,7 +80,8 @@ int main(int argc, char *argv[]) {
 	 } IMAGE_NT_HEADERS32,*PIMAGE_NT_HEADERS32;
 	 /*/
 	print_title("IMAGE_NT_HEADERS");
-	printx("Signature", hNT->Signature); //#define IMAGE_NT_SIGNATURE 0x00004550
+	//#define IMAGE_DOS_SIGNATURE 0x5A4D
+	printx("Signature", hNT->Signature);
 
 	/*/
 	 typedef struct _IMAGE_FILE_HEADER {
@@ -289,9 +275,9 @@ int main(int argc, char *argv[]) {
 	 } IMAGE_SECTION_HEADER,*PIMAGE_SECTION_HEADER;
 	 /*/
 	print_title("IMAGE_SECTION_HEADER");
-	for (int i = 0; i < hNT->FileHeader.NumberOfSections; i++) {
-		hSection = (PIMAGE_SECTION_HEADER) (hFileMap + hDOS->e_lfanew
-				+ sizeof(IMAGE_NT_HEADERS) + i * sizeof(IMAGE_SECTION_HEADER));
+	int i;
+	for (i = 0; i < hNT->FileHeader.NumberOfSections; i++) {
+		hSection = MapPE_SECTIONS(hFileMap, i);
 		print_subtitle("Name", hSection->Name);
 		printx("Misc.PhysicalAddress", hSection->Misc.PhysicalAddress);
 		printx("Misc.VirtualSize", hSection->Misc.VirtualSize);
@@ -304,7 +290,7 @@ int main(int argc, char *argv[]) {
 		printx("NumberOfLinenumbers", hSection->NumberOfLinenumbers);
 		printx("Characteristics", hSection->Characteristics);
 	}
-	
+
 	/*/
 	 typedef struct _IMAGE_IMPORT_DESCRIPTOR {
 	 _ANONYMOUS_UNION union {
@@ -365,22 +351,7 @@ int main(int argc, char *argv[]) {
 		}
 		hEntryImport++;
 	}
-	UnmapViewOfFile(hFileMap);
-	CloseHandle(hFileMapping);
-	CloseHandle(hFile);
+	MapPE_close(hFileMap);
 	printf("[+] END OF DOOM [+]");
 	return 0;
-}
-
-DWORD RVAtoOFFSET(HANDLE hFileMap, const DWORD RVA) {
-	PIMAGE_DOS_HEADER hDOS = (PIMAGE_DOS_HEADER) hFileMap;
-	PIMAGE_NT_HEADERS hNT = (PIMAGE_NT_HEADERS) (hFileMap + hDOS->e_lfanew);
-	PIMAGE_SECTION_HEADER hSection = (PIMAGE_SECTION_HEADER) (hFileMap
-			+ hDOS->e_lfanew + sizeof(IMAGE_NT_HEADERS));
-	for (int i = 0;
-			i < hNT->FileHeader.NumberOfSections
-					&& (hSection->VirtualAddress + hSection->Misc.VirtualSize)
-							<= RVA; i++, hSection++)
-		;
-	return RVA - hSection->VirtualAddress + hSection->PointerToRawData;
 }
