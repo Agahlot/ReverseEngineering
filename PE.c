@@ -18,9 +18,7 @@ int main(int argc, char *argv[]) {
 
 	HANDLE hFileMap = MapPE_open(argv[1]);
 	PIMAGE_DOS_HEADER hDOS = MapPE_DOS(hFileMap);
-	;
 	PIMAGE_NT_HEADERS hNT = MapPE_NT(hFileMap);
-	;
 	PIMAGE_SECTION_HEADER hSection;
 	PIMAGE_IMPORT_DESCRIPTOR hEntryImport;
 	PIMAGE_THUNK_DATA hOriginalFirstThunk;
