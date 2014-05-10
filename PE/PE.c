@@ -1,19 +1,21 @@
 #include <stdio.h>
-#include <stdlib.h>
 #include <windows.h>
-#include <MapPE.h>
+#include <PE.h>
+
 #define C_EOL "\n"
 #define printx(x,y) printf("%-32s : 0x%08x" C_EOL, x, y);
 #define print_dd(x,y) printf("%-52s : %08x" C_EOL, x, y);
 #define print_title(x) printf("*** %s ***" C_EOL , x);
 #define print_subtitle(x,y) printf("[+] %s : %s" C_EOL, x, y);
-#define NOTICE "PEDump by Toufik Airane ~ follow @tfairane" C_EOL\
-    "Usage : %s <win32 file>" C_EOL\
-    "Report bugs : tf.airane@gmail.com" C_EOL, argv[0]
+
+#define NOTICE \
+"[~] PEDump by Toufik Airane ~ follow @tfairane" C_EOL\
+"[~] Usage : %s <win32 file>" C_EOL\
+"[~] Report bugs : tf.airane@gmail.com" C_EOL, argv[0]
 
 int main(int argc, char *argv[]) {
 	if (argc != 2)
-		exit(EXIT_FAILURE);
+		exit(EXIT_SUCCESS);
 	printf(NOTICE);
 
 	HANDLE hFileMap = MapPE_open(argv[1]);

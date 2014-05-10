@@ -1,24 +1,23 @@
 #ifndef _PEB_H
 #define _PEB_H
 
-typedef LPVOID* PPVOID;
 typedef struct _LSA_UNICODE_STRING {
-	USHORT Length;
-	USHORT MaximumLength;
-	PWSTR Buffer;
-} LSA_UNICODE_STRING, *PLSA_UNICODE_STRING, UNICODE_STRING;
+  USHORT Length;
+  USHORT MaximumLength;
+  PWSTR  Buffer;
+} LSA_UNICODE_STRING, *PLSA_UNICODE_STRING, UNICODE_STRING, *PUNICODE_STRING;
 
 typedef struct _RTL_USER_PROCESS_PARAMETERS {
-	BYTE Reserved1[16];
-	PVOID Reserved2[10];
-	UNICODE_STRING ImagePathName;
-	UNICODE_STRING CommandLine;
+  BYTE           Reserved1[16];
+  PVOID          Reserved2[10];
+  UNICODE_STRING ImagePathName;
+  UNICODE_STRING CommandLine;
 } RTL_USER_PROCESS_PARAMETERS, *PRTL_USER_PROCESS_PARAMETERS;
 
 typedef struct _PEB_LDR_DATA {
-	BYTE Reserved1[8];
-	PVOID Reserved2[3];
-	LIST_ENTRY InMemoryOrderModuleList;
+  BYTE       Reserved1[8];
+  PVOID      Reserved2[3];
+  LIST_ENTRY InMemoryOrderModuleList;
 } PEB_LDR_DATA, *PPEB_LDR_DATA;
 
 typedef struct _PEB {
@@ -161,44 +160,9 @@ typedef struct _PROCESS_BASIC_INFORMATION {
 
 enum PROCESSINFOCLASS {
 	ProcessBasicInformation = 0,
-	ProcessQuotaLimits,
-	ProcessIoCounters,
-	ProcessVmCounters,
-	ProcessTimes,
-	ProcessBasePriority,
-	ProcessRaisePriority,
 	ProcessDebugPort = 7,
-	ProcessExceptionPort,
-	ProcessAccessToken,
-	ProcessLdtInformation,
-	ProcessLdtSize,
-	ProcessDefaultHardErrorMode,
-	ProcessIoPortHandlers, //Only ring 0
-	ProcessPooledUsageAndLimits,
-	ProcessWorkingSetWatch,
-	ProcessUserModeIOPL,
-	ProcessEnableAlignmentFaultFixup,
-	ProcessPriorityClass,
-	ProcessWx86Information,
-	ProcessHandleCount,
-	ProcessAffinityMask,
-	ProcessPriorityBoost,
-	MaxProcessInfoClass,
-	ProcessWow64Information = 26
+	ProcessWow64Information = 26,
 	ProcessImageFileName = 27,
-	ProcessLUIDDeviceMapsEnabled,
 	ProcessBreakOnTermination = 29
-	ProcessDebugObjectHandle,//30
-	ProcessDebugFlags,
-	ProcessHandleTracing,
-	ProcessIoPriority,
-	ProcessExecuteFlags,
-	ProcessTlsInformation,//35
-	ProcessCookie,
-	ProcessImageInformation,//Only Win XP SP2
-	ProcessCycleTime,
-	ProcessPagePriority,
-	ProcessInstrumentationCallback,
-	MaxProcessInfoClass
 };
 #endif /* PEB_H_ */

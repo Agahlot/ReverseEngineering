@@ -3,7 +3,7 @@
 
 int main(int argc, char *argv[]) {
 	if (argc != 3) {
-		printf("[#] %s <dll> <function>", argv[0]);
+		printf("[~] %s <dll> <function>", argv[0]);
 		return 0x1;
 	}
 
