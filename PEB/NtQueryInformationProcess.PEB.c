@@ -1,4 +1,5 @@
 #include<stdio.h>
+#include<windows.h>
 #include<PEB.h>
 
 /*
@@ -11,12 +12,17 @@
  *);
 */
 typedef DWORD (*pNtQueryInformationProcess)(HANDLE, enum PROCESSINFOCLASS, PVOID, ULONG, PULONG);
+typedef PPEB (*pRtlGetCurrentPeb)(void);
 
-void main() {
+int main() {
 	PROCESS_BASIC_INFORMATION ProcessInformation;
 	PPEB PEB;
 	PRTL_USER_PROCESS_PARAMETERS UPP;
 	PPEB_LDR_DATA LDR;
+
+	pRtlGetCurrentPeb RtlGetCurrentPeb =
+            (pRtlGetCurrentPeb) GetProcAddress(
+            LoadLibrary("Ntdll.dll"), "RtlGetCurrentPeb");
 
 	pNtQueryInformationProcess NtQueryInformationProcess =
 			(pNtQueryInformationProcess) GetProcAddress(
@@ -28,4 +34,7 @@ void main() {
 	PEB = (PPEB) ProcessInformation.PebBaseAddress;
 	UPP = (PRTL_USER_PROCESS_PARAMETERS) PEB->ProcessParameters;
 	LDR = (PPEB_LDR_DATA) PEB->Ldr;
+
+	printf("PEB location : %08x", PEB);
+	return 0;
 }

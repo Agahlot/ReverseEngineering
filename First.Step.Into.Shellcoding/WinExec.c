@@ -1,5 +1,5 @@
 /*
- * Shellcode Static Address
+ * Shellcode API Static Address
  * WinExec(Calc.exe,0); ExitProcess(0);
  * Windows 7 Home Premium Service Pack 1 x86_64
  */

@@ -1,8 +1,6 @@
 #include <stdio.h>
 #include <windows.h>
 #include <TlHelp32.h>
-#define C_EOL "\n"
-#define NOTICE "Usage : %s <PID> - list modules"
 
 void ms(int pid) {
 	MODULEENTRY32 ModuleEntry;
@@ -18,13 +16,13 @@ void ms(int pid) {
 	}
 
 	while (Module32Next(Snapshot32Module, &ModuleEntry))
-		printf("[+] %-32s" C_EOL, ModuleEntry.szModule);
+		printf("[+] %-32s : 0x%08x\n", ModuleEntry.szModule, ModuleEntry.modBaseAddr);
 	CloseHandle(Snapshot32Module);
 }
 
 void main(int argc, char* argv[]) {
     if(argc!=2)
-        printf(NOTICE);
+        printf("[~] Usage : %s <PID> - list modules\n", argv[0]);
     else
         ms(atoi(argv[1]));
 }

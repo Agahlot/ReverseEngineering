@@ -14,6 +14,23 @@ typedef struct _RTL_USER_PROCESS_PARAMETERS {
   UNICODE_STRING CommandLine;
 } RTL_USER_PROCESS_PARAMETERS, *PRTL_USER_PROCESS_PARAMETERS;
 
+typedef struct _LDR_DATA_TABLE_ENTRY {
+    PVOID Reserved1[2];
+    LIST_ENTRY InMemoryOrderLinks;
+    PVOID Reserved2[2];
+    PVOID DllBase;
+    PVOID EntryPoint;
+    PVOID Reserved3;
+    UNICODE_STRING FullDllName;
+    BYTE Reserved4[8];
+    PVOID Reserved5[3];
+    union {
+        ULONG CheckSum;
+        PVOID Reserved6;
+    };
+    ULONG TimeDateStamp;
+} LDR_DATA_TABLE_ENTRY, *PLDR_DATA_TABLE_ENTRY;
+
 typedef struct _PEB_LDR_DATA {
   BYTE       Reserved1[8];
   PVOID      Reserved2[3];
@@ -71,7 +88,7 @@ typedef struct _PEB {
 	ULONG TlsBitmapBits[2];
 	PVOID ReadOnlySharedMemoryBase;
 	PVOID HotpatchInformation;
-	PPVOID ReadOnlyStaticServerData;
+	PVOID *ReadOnlyStaticServerData;
 	PVOID AnsiCodePageData;
 	PVOID OemCodePageData;
 	PVOID UnicodeCaseTableData;
@@ -87,7 +104,7 @@ typedef struct _PEB {
 
 	ULONG NumberOfHeaps;
 	ULONG MaximumNumberOfHeaps;
-	PPVOID ProcessHeaps;
+	PVOID *ProcessHeaps;
 
 	PVOID GdiSharedHandleTable;
 	PVOID ProcessStarterHelper;
@@ -126,7 +143,7 @@ typedef struct _PEB {
 
 	SIZE_T MinimumStackCommit;
 
-	PPVOID FlsCallback;
+	PVOID *FlsCallback;
 	LIST_ENTRY FlsListHead;
 	PVOID FlsBitmap;
 	ULONG FlsBitmapBits[128 / (sizeof(ULONG) * 8)];
