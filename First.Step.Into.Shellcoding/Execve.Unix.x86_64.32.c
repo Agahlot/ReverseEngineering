@@ -2,7 +2,7 @@
  * execve('/bin/sh')
  * file format elf64-x86-64
  * gcc -z execstack -fno-stack-protector shellcode.c -o shellcode
-[nASM]
+[NASM]
 BITS 64
 global _start
 

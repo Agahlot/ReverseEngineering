@@ -1,5 +1,5 @@
 /* Linux x86_64 Shellcode
- * execve('/bin/bash')
+ * execve('/bin/sh')
  * file format elf64-x86-64
  * gcc -z execstack -fno-stack-protector shellcode.c -o shellcode
 Disassembly of section .text:
