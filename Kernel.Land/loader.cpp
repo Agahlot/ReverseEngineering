@@ -13,8 +13,8 @@ int _tmain(int argc, _TCHAR* argv[])
 
 		hService = CreateService(
 			hSCManager,
-			TEXT("DriverTestServer"),
-			TEXT("DriverTestServer"),
+			TEXT("DriverTestService"),
+			TEXT("DriverTestService"),
 			SERVICE_START | DELETE | SERVICE_STOP,
 			SERVICE_KERNEL_DRIVER,
 			SERVICE_DEMAND_START,
@@ -26,7 +26,7 @@ int _tmain(int argc, _TCHAR* argv[])
 
 			hService = OpenService(
 				hSCManager,
-				TEXT("DriverTestServer"),
+				TEXT("DriverTestService"),
 				SERVICE_START | DELETE | SERVICE_STOP);
 		}
 
