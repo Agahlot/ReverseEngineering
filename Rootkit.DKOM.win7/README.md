@@ -6,12 +6,12 @@
  Direct Kernel Object Manipulationon on EPROCESS opaque struct
  Toufik Airane @tfairane
 
-- don't forget to :
+> don't forget to :
   * sign driver
   * compile in 64 bits mode
 
 Tested on : win7sp1
-
+```
 lkd> lm v m nt
 start             end                 module name
 fffff800`02e4d000 fffff800`03432000   nt         (export symbols)       ntkrnlmp.exe
@@ -36,12 +36,9 @@ fffff800`02e4d000 fffff800`03432000   nt         (export symbols)       ntkrnlmp
     FileVersion:      6.1.7601.18409 (win7sp1_gdr.140303-2144)
     FileDescription:  NT Kernel & System
     LegalCopyright:   © Microsoft Corporation. All rights reserved.
+```
 
-
-    ![](https://github.com/tfairane/ReverseEngineering/blob/master/Rootkit.DKOM.win7/rootkitban.png)
-
-    ![](https://github.com/tfairane/ReverseEngineering/blob/master/Rootkit.DKOM.win7/rootkit1.png)
-
-    ![](https://github.com/tfairane/ReverseEngineering/blob/master/Rootkit.DKOM.win7/rootkit2.png)
-
-    ![](https://github.com/tfairane/ReverseEngineering/blob/master/Rootkit.DKOM.win7/rootkitdbg.png)
+![Alt text](/rootkitban.png?raw=true)
+![Alt text](/rootkit1.png?raw=true)
+![Alt text](/rootkit2.png?raw=true)
+![Alt text](/rootkitdbg.png?raw=true)
