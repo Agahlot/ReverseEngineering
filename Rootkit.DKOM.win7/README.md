@@ -42,4 +42,4 @@ fffff800`02e4d000 fffff800`03432000   nt         (export symbols)       ntkrnlmp
 ![Alt text](/Rootkit.DKOM.win7/rootkitban.png?raw=true)
 ![Alt text](/Rootkit.DKOM.win7/rootkit1.png?raw=true)
 ![Alt text](/Rootkit.DKOM.win7/rootkit2.png?raw=true)
-![Alt text](/Rootkit.DKOM.win7/rootkitban.png?raw=true)
+![Alt text](/Rootkit.DKOM.win7/rootkitdbg.png?raw=true)
