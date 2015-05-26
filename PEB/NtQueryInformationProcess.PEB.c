@@ -11,7 +11,7 @@
  *_Out_opt_  PULONG ReturnLength
  *);
 */
-typedef DWORD (*pNtQueryInformationProcess)(HANDLE, enum PROCESSINFOCLASS, PVOID, ULONG, PULONG);
+typedef NTSTATUS(WINAPI*pNtQueryInformationProcess)(HANDLE, PROCESSINFOCLASS, PVOID, ULONG, PULONG);
 typedef PPEB (*pRtlGetCurrentPeb)(void);
 
 int main() {
