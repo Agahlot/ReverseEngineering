@@ -80,7 +80,6 @@ int main(int argc, char *argv[]) {
 	 } IMAGE_NT_HEADERS32,*PIMAGE_NT_HEADERS32;
 	 /*/
 	print_title("IMAGE_NT_HEADERS");
-	//#define IMAGE_DOS_SIGNATURE 0x5A4D
 	printx("Signature", hNT->Signature);
 
 	/*/
