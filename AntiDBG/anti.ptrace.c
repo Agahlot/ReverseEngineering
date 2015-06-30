@@ -8,7 +8,6 @@ typedef long (*orig_ptrace_f_type)(void* request, pid_t pid, void *addr, void *d
 
 long ptrace(void* request, pid_t pid, void *addr, void *data)
 {
-
     if((((unsigned int)request) == 0) && (((unsigned int)pid) == 0) && (((unsigned int)addr) == 1) && (((unsigned int)0) == 0))
     {
         return 0;
