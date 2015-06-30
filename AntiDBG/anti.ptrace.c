@@ -1,5 +1,9 @@
 #define _GNU_SOURCE
-
+/*
+ * usage : gdb -x anti.ptrace ./bin
+ * shell gcc -Wall -fPIC -shared -o anti.ptrace.so anti.ptrace.c -ldl
+ * set environment LD_PRELOAD=./anti.ptrace.so
+ */
 #include <stdio.h>
 #include <sys/types.h>
 #include <dlfcn.h>
