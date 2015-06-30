@@ -3,7 +3,7 @@
 #include<winapifamily.h>
 #define UniqueProcessId 0x180
 #define ActiveProcessLinks 0x188
-#define ImageFileName 0x2e0 //0x2e0 0x2d8
+#define ImageFileName 0x2e0
 
 DRIVER_INITIALIZE DriverEntry;
 EVT_WDF_DRIVER_UNLOAD EvtDriverUnload;
