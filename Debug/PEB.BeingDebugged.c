@@ -1,7 +1,7 @@
 #include<stdio.h>
 #include<PEB.h>
 
-typedef DWORD (*pNtQueryInformationProcess)(HANDLE, enum PROCESSINFOCLASS,
+typedef DWORD (WINAPI*pNtQueryInformationProcess)(HANDLE, enum PROCESSINFOCLASS,
 		PVOID, ULONG, PULONG);
 
 int main() {
