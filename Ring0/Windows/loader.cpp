@@ -1,13 +1,15 @@
 #include "stdafx.h"
 #include <Windows.h>
-
+#define ServiceName "POC.DKOM.W7.rootkit"
+#define DisplayName "POC.DKOM.W7.rootkit"
+#define BinaryPathName "C:\\\\Users\\...\\rootkit.sys"
 int _tmain(int argc, _TCHAR* argv[])
 {
 	SC_HANDLE hSCManager;
 	SC_HANDLE hService;
 	SERVICE_STATUS ss;
 	
-	printf("Load W7 driver unsigned/signed\nhigh privileged required\n");
+	printf("Load Windows driver.sys UAC\n");
 
 	// get Service Control Manager
 	hSCManager = OpenSCManager(NULL, NULL, SC_MANAGER_CREATE_SERVICE);
@@ -17,13 +19,13 @@ int _tmain(int argc, _TCHAR* argv[])
 		// Create Service
 		hService = CreateService(
 			hSCManager,
-			TEXT("POC.DKOM.W7.rootkit"),
-			TEXT("POC.DKOM.W7.rootkit"),
+			TEXT(ServiceName),
+			TEXT(DisplayName),
 			SERVICE_START | DELETE | SERVICE_STOP,
 			SERVICE_KERNEL_DRIVER,
 			SERVICE_DEMAND_START,
 			SERVICE_ERROR_IGNORE,
-			TEXT("C:\\\\Users\\Airane\\Documents\\Visual Studio 2013\\Projects\\rootkit\\x64\\Win7Debug\\rootkit.sys"),
+			TEXT(BinaryPathName),
 			NULL, NULL, NULL, NULL, NULL);
 
 		// if service does not exist, open it 
