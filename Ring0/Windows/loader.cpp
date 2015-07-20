@@ -15,8 +15,6 @@ int _tmain(int argc, _TCHAR* argv[])
 	hSCManager = OpenSCManager(NULL, NULL, SC_MANAGER_CREATE_SERVICE);
 
 	if (hSCManager) {
-
-		// Create Service
 		hService = CreateService(
 			hSCManager,
 			TEXT(ServiceName),
@@ -38,7 +36,6 @@ int _tmain(int argc, _TCHAR* argv[])
 
 		// if service exist, start it
 		if (hService) {
-
 			StartService(hService, 0, NULL);
 
 			printf("Please, press any key to unload driver\n");
