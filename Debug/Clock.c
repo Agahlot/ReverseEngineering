@@ -3,7 +3,7 @@
 int main() {
 	int antidbg = clock();
 	/*
-	 // Routine du Programme à protéger
+	 * Routine du Programme à protéger
 	 */
 	if (clock() - antidbg > 100) {
 		printf("Anti-Debugging Protection");

