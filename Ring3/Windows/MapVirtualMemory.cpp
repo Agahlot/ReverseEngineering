@@ -11,7 +11,8 @@ int _tmain(int argc, _TCHAR* argv[])
 	PBYTE hDump = 0;
 
 	// Minesweeper.exe x64 Cheat 99 to 1 Bombs
-	BYTE pattern[] = { 0xFF, 0x00, 0x00, 0x00, 0x00, 0x63, 0x00, 0x00, 0x00, 0x10, 0x00, 0x00, 0x00 };
+	BYTE pattern[] = { 0xFF, 0x00, 0x00, 0x00, 0x00, 0x63, 0x00, 0x00, 0x00, 0x10 };
+	BYTE offset_pattern = 5;
 
 	if (argc != 2)
 		return 0;
@@ -25,7 +26,7 @@ int _tmain(int argc, _TCHAR* argv[])
 
 		if (memcmp(basicInfoEnum, basicInfo, sizeof(MEMORY_BASIC_INFORMATION)) && basicInfoEnum->AllocationBase != 0) {
 			if (basicInfoEnum->AllocationBase == basicInfo->AllocationBase) {
-				printf("%29s BaseAddress : %p RegionSize %p Protect : %x\t\n", " ", basicInfoEnum->BaseAddress, basicInfoEnum->RegionSize, basicInfoEnum->Protect);
+				printf("%32s BaseAddress : %p RegionSize %p Protect : %x\t\n", " ", basicInfoEnum->BaseAddress, basicInfoEnum->RegionSize, basicInfoEnum->Protect);
 			}
 			else {
 				printf("[+] AllocationBase : %p BaseAddress : %p RegionSize %p Protect : %x\t\n", basicInfoEnum->AllocationBase, basicInfoEnum->BaseAddress, basicInfoEnum->RegionSize, basicInfoEnum->Protect);
@@ -39,8 +40,7 @@ int _tmain(int argc, _TCHAR* argv[])
 			if (hDump && szbuffer != 0) {
 				for (j = 0; j < basicInfoEnum->RegionSize; j++) {
 					if (!memcmp(&hDump[j], &pattern, sizeof(pattern))) {
-						printf("Pattern over here, Captain!\nAddr: %x", (ULONG) basicInfoEnum->BaseAddress + (j + 5));
-						hDump[j + 5] = 0x01;
+						printf("Pattern over here, Captain! Addr: %x\n", (DWORD)basicInfoEnum->BaseAddress + (j + offset_pattern));
 						/*
 						SIZE_T k = j;
 						for (; k < j + 16; k++)  {
