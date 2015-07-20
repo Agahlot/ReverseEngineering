@@ -9,12 +9,11 @@ DRIVER_INITIALIZE DriverEntry;
 EVT_WDF_DRIVER_UNLOAD EvtDriverUnload;
 
 VOID ExploreEPROCESS() {
-
 	PEPROCESS cEProcess = (PEPROCESS)PsGetCurrentProcess(), origEProcess = cEProcess;
 	PLIST_ENTRY cActiveProcessLinks;
 	PUCHAR cImageFileName;
 	PUINT32 cPid;
-
+	
 	do {
 		cImageFileName = (PUCHAR)((DWORD64)cEProcess + ImageFileName);
 		cPid = (PUINT32)((DWORD64)cEProcess + UniqueProcessId);
