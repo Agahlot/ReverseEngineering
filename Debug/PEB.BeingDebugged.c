@@ -1,5 +1,6 @@
 #include<stdio.h>
-#include<PEB.h>
+#include<windows.h>
+#include<winternl.h>
 
 typedef DWORD (WINAPI*pNtQueryInformationProcess)(HANDLE, enum PROCESSINFOCLASS,
 		PVOID, ULONG, PULONG);
