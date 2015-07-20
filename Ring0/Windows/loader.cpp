@@ -32,7 +32,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		if (!hService) {
 			hService = OpenService(
 				hSCManager,
-				TEXT("POC.DKOM.W7.rootkit"),
+				TEXT(ServiceName),
 				SERVICE_START | DELETE | SERVICE_STOP);
 		}
 
