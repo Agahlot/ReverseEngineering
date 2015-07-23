@@ -27,10 +27,10 @@ int _tmain(int argc, _TCHAR* argv[])
 
 		if (memcmp(basicInfoEnum, basicInfo, sizeof(MEMORY_BASIC_INFORMATION)) && basicInfoEnum->AllocationBase != 0) {
 			if (basicInfoEnum->AllocationBase == basicInfo->AllocationBase) {
-				printf("%32s BaseAddress : %p RegionSize %p Protect : %x\t\n", " ", basicInfoEnum->BaseAddress, basicInfoEnum->RegionSize, basicInfoEnum->Protect);
+				printf("[-] %32s BaseAddress : %p RegionSize %p Protect : %x\t\n", " ", basicInfoEnum->BaseAddress, basicInfoEnum->RegionSize, basicInfoEnum->Protect);
 			}
 			else {
-				printf("[+] AllocationBase : %p BaseAddress : %p RegionSize %p Protect : %x\t\n", basicInfoEnum->AllocationBase, basicInfoEnum->BaseAddress, basicInfoEnum->RegionSize, basicInfoEnum->Protect);
+				printf("AllocationBase : %p BaseAddress : %p RegionSize %p Protect : %x\t\n", basicInfoEnum->AllocationBase, basicInfoEnum->BaseAddress, basicInfoEnum->RegionSize, basicInfoEnum->Protect);
 			}
 			memcpy(basicInfo, basicInfoEnum, sizeof(MEMORY_BASIC_INFORMATION));
 		}
