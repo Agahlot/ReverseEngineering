@@ -4,15 +4,16 @@
 
 int _tmain(int argc, _TCHAR* argv[])
 {
+	// Init
 	PMEMORY_BASIC_INFORMATION basicInfo = (PMEMORY_BASIC_INFORMATION)malloc(sizeof(MEMORY_BASIC_INFORMATION));
 	PMEMORY_BASIC_INFORMATION basicInfoEnum = (PMEMORY_BASIC_INFORMATION)malloc(sizeof(MEMORY_BASIC_INFORMATION));
 	LPSYSTEM_INFO sysInfo = (LPSYSTEM_INFO)malloc(sizeof(SYSTEM_INFO));
 	SIZE_T i = 0, j = 0, szbuffer = 0;
 	PBYTE hDump = 0;
 
-	// Minesweeper.exe x64 Cheat 99 to 1 Bombs
-	BYTE pattern[] = { 0xFF, 0x00, 0x00, 0x00, 0x00, 0x63, 0x00, 0x00, 0x00, 0x10 };
-	BYTE offset_pattern = 5;
+	// Pattern Signature
+	BYTE pattern[] = { 0xFF, 0xFF, 0xFF, 0xFF };
+	BYTE offset_pointer = 0;
 
 	if (argc != 2)
 		return 0;
@@ -40,7 +41,7 @@ int _tmain(int argc, _TCHAR* argv[])
 			if (hDump && szbuffer != 0) {
 				for (j = 0; j < basicInfoEnum->RegionSize; j++) {
 					if (!memcmp(&hDump[j], &pattern, sizeof(pattern))) {
-						printf("Pattern over here, Captain! Addr: %x\n", (DWORD)basicInfoEnum->BaseAddress + (j + offset_pattern));
+						printf("Pattern over here, Captain! Addr: %x\n", (DWORD)basicInfoEnum->BaseAddress + (j + offset_pointer));
 						/*
 						SIZE_T k = j;
 						for (; k < j + 16; k++)  {
@@ -62,4 +63,3 @@ int _tmain(int argc, _TCHAR* argv[])
 	CloseHandle(hProcess);
 	return 0;
 }
-
