@@ -12,7 +12,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	PBYTE hDump = 0;
 
 	// Pattern Signature
-	BYTE pattern[] = { 0xFF, 0xFF, 0xFF, 0xFF };
+	BYTE pattern[] = { 0x70, 0x61, 0x73, 0x73, 0x77, 0x6f, 0x72, 0x64 };
 	BYTE offset_pointer = 0;
 
 	if (argc != 2)
@@ -27,10 +27,10 @@ int _tmain(int argc, _TCHAR* argv[])
 
 		if (memcmp(basicInfoEnum, basicInfo, sizeof(MEMORY_BASIC_INFORMATION)) && basicInfoEnum->AllocationBase != 0) {
 			if (basicInfoEnum->AllocationBase == basicInfo->AllocationBase) {
-				printf("[-] %32s BaseAddress : %p RegionSize %p Protect : %x\t\n", " ", basicInfoEnum->BaseAddress, basicInfoEnum->RegionSize, basicInfoEnum->Protect);
+				printf("%24s [+] BaseAddress: %p RegionSize: %p Protect: %x\t\n", " ", basicInfoEnum->BaseAddress, basicInfoEnum->RegionSize, basicInfoEnum->Protect);
 			}
 			else {
-				printf("AllocationBase : %p BaseAddress : %p RegionSize %p Protect : %x\t\n", basicInfoEnum->AllocationBase, basicInfoEnum->BaseAddress, basicInfoEnum->RegionSize, basicInfoEnum->Protect);
+				printf("[-] AllocationBase: %p BaseAddress: %p RegionSize: %p Protect: %x\t\n", basicInfoEnum->AllocationBase, basicInfoEnum->BaseAddress, basicInfoEnum->RegionSize, basicInfoEnum->Protect);
 			}
 			memcpy(basicInfo, basicInfoEnum, sizeof(MEMORY_BASIC_INFORMATION));
 		}
