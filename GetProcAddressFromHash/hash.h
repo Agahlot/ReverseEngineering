@@ -1,6 +1,6 @@
-#ifndef _hash_H
-#define _hash_H
+#ifndef _HASH_H
+#define _HASH_H
 
 
 
-#endif // _hash_H
+#endif // _HASH_H

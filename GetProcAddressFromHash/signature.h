@@ -1,5 +1,5 @@
-#ifndef _signature_H
-#define _signature_H
+#ifndef _SIGNATURE_H
+#define _SIGNATURE_H
 
 /* VOID WINAPI Sleep(
 _In_ DWORD dwMilliseconds
@@ -7,4 +7,4 @@ _In_ DWORD dwMilliseconds
 typedef VOID(WINAPI*pLambda0)(_In_ DWORD dwMilliseconds); // Sleep()
 
 
-#endif // _signature_H
+#endif // _SIGNATURE_H
