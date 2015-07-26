@@ -1,11 +1,13 @@
 #include "stdafx.h"
 #include "PE.h"
 #include "signature.h"
+#include "hash.h"
+#include "md5.h"
 
 #define DEBUG FALSE
 
 
-PDWORD GetProcAddressFromHash(WCHAR* dll, CHAR* function, BOOL byHash) {
+PDWORD GetProcAddressFromHash(WCHAR* dll, ULONGLONG hash) {
 	PPEB Peb; UINT i;
 	PPEB_LDR_DATA Ldr;
 	PLDR_DATA_TABLE_ENTRY Module;
@@ -66,13 +68,9 @@ PDWORD GetProcAddressFromHash(WCHAR* dll, CHAR* function, BOOL byHash) {
 		printf("%s <> 0x%p\n", (char*)(imageBaseAddr + hEAT.name[i]), (PDWORD)(imageBaseAddr + hEAT.function[i]));
 #endif // DEBUG
 
-	if (byHash) {
-	}
-	else {
-		for (i = 0; i < hExport->NumberOfNames; i++) {
-			if (!strcmp((char*)(imageBaseAddr + hEAT.name[i]), function))
-				break;
-		}
+	for (i = 0; i < hExport->NumberOfNames; i++) {
+		if (hashkey((PCHAR)(imageBaseAddr + hEAT.name[i])) == hash)
+			break;
 	}
 
 	free(hSection);
@@ -86,8 +84,10 @@ PDWORD GetProcAddressFromHash(WCHAR* dll, CHAR* function, BOOL byHash) {
 
 int main(int argc, char* argv[])
 {
-	pLambda0 lambda0 = (pLambda0)GetProcAddressFromHash(L"kernel32.dll", "Sleep", FALSE);
+	// "Sleep": 3675000
+	pLambda0 lambda0 = (pLambda0)GetProcAddressFromHash(L"kernel32.dll", 3675000);
 	lambda0(10000);
+
 	return 0;
 }
 
