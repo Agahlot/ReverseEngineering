@@ -7,7 +7,7 @@
 #define DEBUG FALSE
 
 
-PDWORD GetProcAddressFromHash(WCHAR* dll, ULONGLONG hash) {
+PDWORD GetProcAddressByHash(WCHAR* dll, ULONGLONG hash) {
 	PPEB Peb; UINT i;
 	PPEB_LDR_DATA Ldr;
 	PLDR_DATA_TABLE_ENTRY Module;
@@ -85,9 +85,8 @@ PDWORD GetProcAddressFromHash(WCHAR* dll, ULONGLONG hash) {
 int main(int argc, char* argv[])
 {
 	// "Sleep": 3675000
-	pLambda0 lambda0 = (pLambda0)GetProcAddressFromHash(L"kernel32.dll", 3675000);
+	pLambda0 lambda0 = (pLambda0)GetProcAddressByHash(L"kernel32.dll", 3675000);
 	lambda0(10000);
 
 	return 0;
 }
-
